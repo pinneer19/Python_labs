@@ -1,14 +1,14 @@
+from constants import *
+
+
 # Calculate some operation with two numbers
-def calculate(num1: int|float, num2: int|float, op: str):
-
-    division, multiply, addition, subtraction = "div", "mult", "add", "sub"
-
-    return num1 / num2 if op == division and num2 != 0 \
-        else num1 * num2 if op == multiply \
-        else num1 + num2 if op == addition \
-        else num1 - num2 if op == subtraction \
+def calculate(num1: int | float, num2: int | float, op: str):
+    return num1 / num2 if op == DIV and num2 != 0 \
+        else num1 * num2 if op == MUL \
+        else num1 + num2 if op == ADD \
+        else num1 - num2 if op == SUB \
         else "Error"
-        
+
 
 # Get even numbers from the given list
 def even(numbers_list):
@@ -22,4 +22,3 @@ def even(numbers_list):
             result.append(i)
 
     return result
-
