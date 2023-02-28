@@ -1,14 +1,12 @@
 # Calculate some operation with two numbers
-def calculate(a, b, op):
-    if not all(isinstance(x, int) for x in [a, b]):
-        return "Error"
+def calculate(num1: int|float, num2: int|float, op: str):
 
     division, multiply, addition, subtraction = "div", "mult", "add", "sub"
-    
-    return a / b if op == division \
-        else a * b if op == multiply \
-        else a + b if op == addition \
-        else a - b if op == subtraction \
+
+    return num1 / num2 if op == division and num2 != 0 \
+        else num1 * num2 if op == multiply \
+        else num1 + num2 if op == addition \
+        else num1 - num2 if op == subtraction \
         else "Error"
         
 
