@@ -13,9 +13,12 @@ def amount_of_sentences(text: str):
 
 
 def amount_of_non_declarative_sentences(text: str):
-    return len(re.split(r"[!?]+", text)) - 1
+    return len(re.findall(r"[!?]+", text))
 
 
 def average_sentence_length(text: str):
-    sentences_amount = amount_of_sentences(text)
-    return len(text.split()) / sentences_amount
+    words = [word for word in re.findall(r"\b\w+\b", text) if not (str(word).isdigit() or '_' in str(word))]
+    words_length = sum(len(word) for word in words)
+    sentences = amount_of_sentences(text)
+
+    return words_length / sentences if sentences != 0 else 0
