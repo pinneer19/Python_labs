@@ -22,3 +22,10 @@ def average_sentence_length(text: str):
     sentences = amount_of_sentences(text)
 
     return words_length / sentences if sentences != 0 else 0
+
+
+def average_word_length(text: str):
+    words = [word for word in re.findall(r"\b\w+\b", text) if not (str(word).isdigit() or '_' in str(word))]
+    words_length = sum(len(word) for word in words)
+
+    return words_length / len(words) if len(words) != 0 else 0
