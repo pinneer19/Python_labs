@@ -1,10 +1,10 @@
 ABBREVIATIONS = [
     "A.M.", "P.M.", "Dr.", "Mr.", "Mrs.", "Ms.", "Jr.", "Sr.", "Co.", "Corp.", "Inc.", "Ltd.", "Gov.",
-    "Sen.", "Rep.", "Capt.", "Col.", "Gen.", "Sgt.", "Rev.", "Ph.D.", "M.D.", "M.A.", "B.S.",
-    "M.S.", "D.C.", "U.S.", "U.K.", "E.U.", "N.A.T.O.", "I.B.M.", "I.R.S.", "F.B.I.", "C.I.A.", "N.A.S.A.",
+    "Sen.", "Rep.", "Capt.", "Col.", "Gen.", "Sgt.", "Rev.", "Ph.D.", "M.D.", "M.A.", "B.S.", "B.Sc."
+    "M.S.", "D.C.", "U.K.", "E.U.", "N.A.T.O.", "I.B.M.", "I.R.S.", "F.B.I.", "C.I.A.", "N.A.S.A.",
     "A.D.", "B.C.", "U.F.O.", "S.O.S.", "E.T.", "I.Q.", "M.P.H.", "G.P.S.", "A.T.M.", "U.S.A.", "U.N.",
     "A.I.", "A.V.", "C.E.O.", "M.B.A.", "C.F.O.", "C.T.O.", "B.T.W.", "E.T.A.", "I.O.U.", "N.B.", "R.S.V.P.",
-    "S.E.O.", "V.I.P.", "V.S.", "W.T.F.", "Y.O.L.O.", "P.S.", "P.P.S.", "e.g.", "i.e."
+    "S.E.O.", "V.I.P.", "V.S.", "W.T.F.", "Y.O.L.O.", "P.S.", "P.P.S.", "e.g.", "i.e.", "etc."
 ]
 
 # 7 sentences

@@ -36,8 +36,9 @@ def top_k_repeated_n_grams(text: str, k=10, n=4):
     gram_dict = dict()
 
     if len(words) < n:
-        print("N can't be greater than words amount!!!")
-        return gram_dict
+        return "N can't be greater than words amount!!!"
+    if k == 0 or n == 0:
+        return []
 
     for i in range(len(words) - n + 1):
         current_gram = " ".join(words[i:i + n])
