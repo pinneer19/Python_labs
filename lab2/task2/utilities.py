@@ -53,3 +53,23 @@ def get_command(container: MyContainer, command: str):
                 container.switch(args[0])
         case _:
             print("Error occurred please check your command!")
+
+
+def run_container(container: MyContainer):
+    user = input("Enter username: ")
+    container.switch(user)
+    print("Write command(type 'help' to see available ones)")
+    while True:
+        command = input()
+        if command.split()[0] == constants.EXIT:
+            if len(command.split()[1:]) != 0:
+                print("'exit' command requires 0 arguments")
+            else:
+                choice = input("Do you want to save your container(y - yes, n - no): ")
+                while choice != 'y' and choice != 'n':
+                    choice = input("Try again..\nDo you want to save your container(y - yes, n - no): ")
+                if choice == 'y':
+                    container.save()
+                break
+        else:
+            get_command(container, command)
