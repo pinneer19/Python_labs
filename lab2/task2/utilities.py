@@ -1,4 +1,4 @@
-from task2 import constants
+import constants
 from container import MyContainer
 
 
