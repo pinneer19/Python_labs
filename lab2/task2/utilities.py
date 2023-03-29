@@ -35,7 +35,7 @@ def get_command(container: MyContainer, command: str):
             if len(args) != 1:
                 print("'grep' command requires 1 argument")
             else:
-                container.grep(args)
+                container.grep(args[0])
         case constants.SAVE:
             if len(args) == 0:
                 container.save()
