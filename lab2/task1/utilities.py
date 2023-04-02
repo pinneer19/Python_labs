@@ -50,3 +50,22 @@ def top_k_repeated_n_grams(text: str, k=10, n=4):
     gram_dict = sorted(gram_dict.items(), reverse=True, key=lambda x: x[1])
 
     return gram_dict if len(gram_dict) <= k else gram_dict[0:k]
+
+
+def print_text_statistics():
+    text = input('Enter your text: ')
+    print('Amount of sentences in the text: ', amount_of_sentences(text))
+    print('Amount of non-declarative sentences in the text: ', amount_of_non_declarative_sentences(text))
+    print('Average length of the sentence in characters(words count only): ', average_sentence_length(text))
+    print('Average length of the word in the text: ', average_word_length(text))
+
+    try:
+        values = input('\nEnter k and n separated by space(or type nothing to use default):\n')
+        if values == '':
+            k, n = 10, 4
+        else:
+            k, n = [int(i) for i in values.split(' ')]
+    except ValueError:
+        print("Error")
+    else:
+        print('Top k repeated n-grams: ', top_k_repeated_n_grams(text, k, n))
