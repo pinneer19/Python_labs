@@ -61,7 +61,9 @@ def run_container(container: MyContainer):
     print("Write command(type 'help' to see available ones)")
     while True:
         command = input()
-        if command.split()[0] == constants.EXIT:
+        if command == '':
+            print("Type existing command")
+        elif command.split()[0] == constants.EXIT:
             if len(command.split()[1:]) != 0:
                 print("'exit' command requires 0 arguments")
             else:

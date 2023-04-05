@@ -37,7 +37,7 @@ def top_k_repeated_n_grams(text: str, k=10, n=4):
 
     if len(words) < n:
         return "N can't be greater than words amount!!!"
-    if k == 0 or n == 0:
+    if k <= 0 or n <= 0:
         return []
 
     for i in range(len(words) - n + 1):
@@ -49,7 +49,7 @@ def top_k_repeated_n_grams(text: str, k=10, n=4):
 
     gram_dict = sorted(gram_dict.items(), reverse=True, key=lambda x: x[1])
 
-    return gram_dict if len(gram_dict) <= k else gram_dict[0:k]
+    return gram_dict if len(gram_dict) <= k else gram_dict[:k]
 
 
 def print_text_statistics():

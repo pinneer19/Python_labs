@@ -56,14 +56,14 @@ class MyContainer:
         print(f"Container was saved to {self.__user}.txt")
 
     def load(self):
-        file = f"{self.__user}.txt"
+
         try:
             with open(f"{self.__user}.txt", 'r') as file:
                 container = set(file.read().split(' '))
                 if not self.__storage[self.__user]:
                     self.__storage[self.__user] = container
                 else:
-                    self.add(*container)
+                    self.add(container)  # error was *container
         except FileNotFoundError:
             print(f"File {self.__user}.txt doesn't exist!")
 
@@ -76,10 +76,8 @@ class MyContainer:
                 self.save()
 
         self.__user = user
+        self.__storage[self.__user] = set()
         print(f"Switched to user {self.__user}")
-
-        if self.__user not in self.__storage.keys():
-            self.__storage[self.__user] = set()
 
         choice = input("Do you want to load container(y - yes, n - no): ")
         while choice != 'y' and choice != 'n':
