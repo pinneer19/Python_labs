@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm
+from .forms import SignUpForm, LoginForm
 
 
 def index(request):
