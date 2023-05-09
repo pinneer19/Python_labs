@@ -1,0 +1,15 @@
+.category {
+  background-color: white;
+}
+
+/* Set the background color of the item when it is targeted */
+.category:target {
+  animation-name: category-background;
+  animation-duration: 2s;
+}
+
+/* Define the animation for changing the background color */
+@keyframes category-background {
+  0% { background-color: lightblue; }
+  100% { background-color: white; }
+}
