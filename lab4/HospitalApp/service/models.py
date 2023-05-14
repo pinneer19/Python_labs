@@ -15,7 +15,6 @@ class ServiceCategory(models.Model):
 class Service(models.Model):
     name = models.CharField('Название', max_length=100)
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE, verbose_name='Категория услуги')
-
     price = models.FloatField('Стоимость (BYN)')
 
     class Meta:

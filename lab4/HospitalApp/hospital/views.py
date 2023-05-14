@@ -1,11 +1,27 @@
-from django.contrib.auth.models import User
+from datetime import datetime, timedelta, timezone
+
+import requests
+from django.contrib.auth import logout
 from django.shortcuts import render, redirect
-from .forms import ClientSignUpForm, LoginForm, DoctorSignUpForm, PassportForm
-from django.contrib.auth import logout, authenticate, get_user_model
-from doctor.models import Doctor
+
 
 def index(request):
-    return render(request, 'hospital/index.html')
+    api_key = 'at_0sitq5Xogpxhk2Sdt4n6ulMUdumrw'
+    url_ip = 'https://api64.ipify.org/?format=json'
+    ip = requests.get(url_ip).json()['ip']
+
+    url = f'https://geo.ipify.org/api/v2/country?apiKey={api_key}&ipAddress={ip}'
+    offset = requests.get(url.format(ip)).json()['location']['timezone']
+
+    hours, minutes = map(int, offset.split(':'))
+
+    tz = timezone(timedelta(hours=hours, minutes=minutes))
+
+    data = {
+        'timezone': tz,
+        'datetime': datetime.now(tz)
+    }
+    return render(request, 'hospital/index.html', data)
 
 
 def contact(request):
@@ -14,59 +30,6 @@ def contact(request):
 
 def signup(request):
     return render(request, 'hospital/signup.html')
-
-
-User = get_user_model()
-
-
-def register_client(request):
-    form = ClientSignUpForm(request.POST or None)
-    passport_form = PassportForm(request.POST or None)
-    if request.method == 'POST':
-
-        if form.is_valid() and passport_form.is_valid():
-            passport = passport_form.save()
-            client = form.save(commit=False)
-            client.passport = passport
-
-            user = User.objects.create_user(
-                username=passport.serial + passport.number,
-                password=form.cleaned_data['password']
-            )
-            client.user = user
-            client.save()
-
-            return redirect('/login/')
-        else:
-            print(form.errors)
-    data = {
-        'form': form,
-        'passport_form': passport_form
-    }
-    return render(request, 'hospital/signup_client.html', data)
-
-
-def register_doctor(request):
-    form = DoctorSignUpForm(request.POST or None)
-    if request.method == 'POST':
-
-        if form.is_valid():
-            client = form.save(commit=False)
-            user = User.objects.create_user(
-                username=form.cleaned_data['login'],
-                password=form.cleaned_data['password']
-            )
-            client.user = user
-            user.save()
-
-            return redirect('/login/')
-        else:
-            print(form.errors)
-
-    data = {
-        'form': form
-    }
-    return render(request, 'hospital/signup_doctor.html', data)
 
 
 def logout_user(request):

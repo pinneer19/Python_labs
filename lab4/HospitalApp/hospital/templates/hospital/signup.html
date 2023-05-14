@@ -12,7 +12,7 @@
     }
 </style>
 <ul class="flex justify-center space-x-8 pt-16">
-    <li><a class="py-4 px-16 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'register_client' %}">Клиент</a></li>
-    <li><a class="py-4 px-20 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'register_doctor' %}">Врач</a></li>
+    <li><a class="py-4 px-16 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'hospital:register_client' %}">Клиент</a></li>
+    <li><a class="py-4 px-20 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'hospital:register_doctor' %}">Врач</a></li>
 </ul>
 {% endblock %}
