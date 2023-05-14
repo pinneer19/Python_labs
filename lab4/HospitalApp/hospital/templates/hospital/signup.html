@@ -3,44 +3,16 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<div class="w-1/2 my-6 mx-auto p-6 bg-gray-100 rounded-xl">
-    <h1 class="mb-6 text-3xl">Sign Up</h1>
-
-    <form method="post" action=".">
-        {% csrf_token %}
-
-        <div class="mb-3">
-            <label class="inline-block mb-2">Username</label><br/>
-            {{ form.username }}<br/>
-        </div>
-
-        <div class="mb-3">
-            <label class="inline-block mb-2">Email</label><br/>
-            {{ form.email }}<br/>
-        </div>
-
-        <div class="mb-3">
-            <label class="inline-block mb-2">Password</label><br/>
-            {{ form.password1 }}<br/>
-        </div>
-
-        <div class="mb-3">
-            <label class="inline-block mb-2">Repeat password</label><br/>
-            {{ form.password2 }}<br/>
-        </div>
-
-        {% if form.errors or form.non_field_errors %}
-            <div class="mb-3 p-6 bg-red-100 rounded-xl">
-                {% for field in form %}
-                    {{ field.errors }}
-                {% endfor %}
-
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
-        <button class="py-4 px-8 text-lg bg-teal-500 hover:bg-teal-700 rounded-xl text-white">Submit</button>
-    </form>
-
+<div class="flex w-1/4 my-20 mx-auto p-6 bg-gray-100 rounded-xl justify-center border-b-2 border-gray-300">
+        <h2 class="text-xl rounded-xl mx-auto text-black">Выберите тип аккаунта</h2>
 </div>
-
+<style>
+    ul li {
+        display: inline-block;
+    }
+</style>
+<ul class="flex justify-center space-x-8 pt-16">
+    <li><a class="py-4 px-16 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'register_client' %}">Клиент</a></li>
+    <li><a class="py-4 px-20 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'register_doctor' %}">Врач</a></li>
+</ul>
 {% endblock %}

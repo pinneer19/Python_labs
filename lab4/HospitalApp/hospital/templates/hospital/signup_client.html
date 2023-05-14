@@ -1,0 +1,50 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="w-1/2 mx-auto p-6 bg-gray-100 rounded-xl">
+
+    <h1 class="mb-4 mt text-3xl">Регистрация клиента</h1>
+
+    <form method="post" action=".">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field }}<br/>
+            </div>
+        {% endfor %}
+
+
+        <div class="flex mb-3 ">
+            <div>
+                {{ passport_form.serial }}
+            </div>
+            <div class="w-full ml-4 flex-grow">
+                {{ passport_form.number }}
+            </div>
+        </div>
+
+
+        {% if form.errors or form.non_field_errors or passport_form.errors or passport_form.non_field_errors %}
+        <div class="mb-3 p-6 bg-red-100 rounded-xl">
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+
+            {{ form.non_field_errors }}
+
+            {% for field in passport_form %}
+                {{ field.errors }}
+            {% endfor %}
+
+            {{ passport_form.non_field_errors }}
+        </div>
+        {% endif %}
+        <button class="py-2 px-8 text-lg bg-teal-500 hover:bg-teal-700 rounded-xl text-white">Завершить</button>
+    </form>
+
+</div>
+
+{% endblock %}

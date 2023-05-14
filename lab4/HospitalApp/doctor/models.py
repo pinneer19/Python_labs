@@ -27,7 +27,8 @@ class Doctor(models.Model):
     first_name = models.CharField('Имя', max_length=255)
     last_name = models.CharField('Фамилия', max_length=255)
     middle_name = models.CharField('Отчество', max_length=255)
-
+    login = models.CharField('Логин', max_length=25, default='')
+    password = models.CharField('Пароль', max_length=25, default='')
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='doctors',
                                    verbose_name='Отделение')
     specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE, related_name='doctors',
