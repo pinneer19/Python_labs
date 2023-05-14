@@ -8,7 +8,7 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('register_client/', views.register_client, name='register_client'),
     path('register_doctor/', views.register_doctor, name='register_doctor'),
-    path('login/', views.login, name='login'),
+    path('login/', views_auth.LoginView.as_view(template_name='hospital/login.html', authentication_form=LoginForm), name='login'),
     re_path(r'^info', include('service.urls')),
     path('', views.index),
 ]

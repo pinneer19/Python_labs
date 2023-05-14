@@ -1,13 +1,8 @@
-import re
-
-from django.forms import ModelForm, ValidationError, inlineformset_factory
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.forms import TextInput, EmailInput, PasswordInput, CharField, DateInput, ModelChoiceField, Select
-from django.contrib.auth.models import User
-
 from client.models import Client, Passport
-from doctor.models import Doctor, Department, Specialization
-
+from django.contrib.auth.forms import AuthenticationForm
+from django.forms import ModelForm
+from django.forms import TextInput, PasswordInput, CharField, DateInput, Select
+from doctor.models import Doctor
 
 class PassportForm(ModelForm):
     class Meta:
@@ -77,14 +72,13 @@ class ClientSignUpForm(ModelForm):
 
 
 class DoctorSignUpForm(ModelForm):
-
     class Meta:
         model = Doctor
 
         fields = ('first_name', 'last_name', 'middle_name', 'department', 'specialization', 'login', 'password')
 
         widgets = {
-            'first_name': TextInput(attrs={
+            "first_name": TextInput(attrs={
                 'class': 'w-full py-4 px-6 rounded-xl',
                 'placeholder': 'Имя'
             }),
@@ -104,17 +98,17 @@ class DoctorSignUpForm(ModelForm):
                 'class': 'w-full py-4 px-6 rounded-xl bg-white',
                 'data-placeholder': 'Специализация'
             }),
-            'login': TextInput(attrs={
+            "login": TextInput(attrs={
                 'class': 'w-full py-4 px-6 rounded-xl',
                 'placeholder': 'Логин'
             }),
-            'password': PasswordInput(attrs={
+            "password": PasswordInput(attrs={
                 'class': 'w-full py-4 px-6 rounded-xl',
                 'placeholder': 'Пароль'
-            }),
+            })
         }
 
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.fields['department'].empty_label = 'Отделение'
         self.fields['specialization'].empty_label = 'Специализация'

@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import RegexValidator, MaxValueValidator
 from datetime import date
@@ -20,11 +21,15 @@ class Passport(models.Model):
         return f'{self.serial}{self.number}'
 
 
+User = get_user_model()
+
+
 class Client(models.Model):
     first_name = models.CharField('Имя', max_length=25)
     last_name = models.CharField('Фамилия', max_length=25)
     middle_name = models.CharField('Отчество', max_length=25)
     passport = models.OneToOneField(Passport, on_delete=models.CASCADE, verbose_name='Серия/Номер паспорта')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default='')
     password = models.CharField('Пароль', max_length=25, default='')
     birthday = models.DateField('Дата рождения', validators=[
         MaxValueValidator(limit_value=date.today().replace(year=date.today().year - 18))])
