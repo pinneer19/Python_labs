@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -15,6 +16,7 @@ class Department(models.Model):
 
 class Specialization(models.Model):
     name = models.CharField('Название', max_length=255)
+    department = models.ForeignKey(Department,on_delete=models.CASCADE, verbose_name='Отделение', default='')
 
     class Meta:
         verbose_name = 'специализацию'

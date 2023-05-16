@@ -6,17 +6,19 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'service/css/service.css' %}"/>
-
-<p class="text-right px-6 py-3 text-lg font-semibold" >{{ timezone }} {{ datetime.date }}</p>
-<div class="container mx-auto px-4">
-
+<div class="container mx-auto px-4 py-8">
     <h2 class="text-2xl font-bold mb-4">Категории услуг</h2>
-    <ul class="flex flex-wrap gap-4 py-2">
+    <ul class="flex flex-wrap gap-4">
         {% for category in categories %}
-        <li><a href="#{{ category.id }}" class="text-blue-500 py-2 border-b-2 hover:text-blue-700">{{ category.name }}</a></li>
+        <li><a href="#{{ category.id }}" class="text-blue-500 hover:text-blue-700">{{ category.name }}</a></li>
         {% endfor %}
     </ul>
-    <h2 class="text-2xl font-bold my-4">Услуги</h2>
+
+    <li class="flex items-center">
+        <h2 class="text-2xl font-bold my-4">Услуги</h2>
+        <h2 class="ml-2 text-xl font-semiblod text-gray-500 my-4">(для заказа выберите желаемые услуги слева от
+            названия)</h2>
+    </li>
 
     <li class="flex items-center">
         <form method="get">
@@ -30,6 +32,10 @@
                 </select>
             </div>
         </form>
+
+    <a href="#"
+       class="ml-4 text-green-600 border-2 border-green-500 hover:bg-green-500 hover:text-white active:bg-green-600 font-bold px-8 py-3 rounded outline-none focus:outline-none">Заказать
+        выбранные услуги</a>
     </li>
 
 
@@ -40,6 +46,7 @@
         {% for service in services %}
         {% if service.category == category %}
         <li class="flex items-center mb-2">
+            <input class="mr-4" type="checkbox" name="services" value="{{ service.id }}">
             <span class="font-light">{{ service.name }}</span>
             <span class="font-light mx-2">-</span>
             <span class="font-extrabold">{{ service.price }} BYN</span>

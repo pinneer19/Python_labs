@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.shortcuts import render, reverse, redirect
 from .forms import ClientSignUpForm, PassportForm
 
@@ -19,9 +20,14 @@ def register_client(request):
                 username=passport.serial + passport.number,
                 password=form.cleaned_data['password']
             )
+
+            group = Group.objects.get(name='client')
+            group.user_set.add(user)
+
             client.user = user
             client.save()
 
+            # return redirect('/login/')
             return redirect(reverse('hospital:login'))
         else:
             print(form.errors)
@@ -30,3 +36,7 @@ def register_client(request):
         'passport_form': passport_form
     }
     return render(request, 'client/signup_client.html', data)
+
+
+def info(request):
+    return render(request, 'client/info.html')

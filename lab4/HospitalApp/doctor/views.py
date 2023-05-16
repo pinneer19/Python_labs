@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, reverse
-
+from django.contrib.auth.models import Group
 from .forms import DoctorSignUpForm
 
 User = get_user_model()
@@ -16,10 +16,14 @@ def register_doctor(request):
                 username=form.cleaned_data['login'],
                 password=form.cleaned_data['password']
             )
+
+            group = Group.objects.get(name='doctor')
+            group.user_set.add(user)
             client.user = user
+
             user.save()
 
-            return redirect(reverse('hospital:login'))
+            return redirect('/login/')
         else:
             print(form.errors)
 
@@ -27,3 +31,7 @@ def register_doctor(request):
         'form': form
     }
     return render(request, 'doctor/signup_doctor.html', data)
+
+
+def info(request):
+    return render(request, 'doctor/info.html')
