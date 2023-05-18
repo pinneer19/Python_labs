@@ -77,8 +77,8 @@ def info(request):
 
     if user.is_superuser:
         return render(request, 'hospital/main.html', context)
-    elif user.groups.filter(name='doctor').exists():
-        return redirect('/doctor/info')
+    elif user.groups.filter(name='client').exists():
+        return redirect('/client/info')
     else:
-        return redirect('error')
+        return redirect('/doctor/info')
 

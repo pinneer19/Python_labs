@@ -1,62 +1,82 @@
 {% extends 'hospital/base.html' %}
 {% load static %}
 
-{% block title %}Информация о доступных услугах{% endblock %}
-
+{% block title %}Личный кабинет{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'service/css/service.css' %}"/>
-<div class="container mx-auto px-4 py-8">
-    <h2 class="text-2xl font-bold mb-4">Категории услуг</h2>
-    <ul class="flex flex-wrap gap-4">
-        {% for category in categories %}
-        <li><a href="#{{ category.id }}" class="text-blue-500 hover:text-blue-700">{{ category.name }}</a></li>
-        {% endfor %}
-    </ul>
+{% if request.user.is_authenticated %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<div class="container mx-auto">
+  <div class="flex justify-center items-center">
+    <a href="{% url 'info_doctor' %}?show_schedule=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Показать расписание</a>
+    <a href="{% url 'info_doctor' %}?show_clients=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Показать клиентов</a>
+  </div>
 
-    <li class="flex items-center">
-        <h2 class="text-2xl font-bold my-4">Услуги</h2>
-        <h2 class="ml-2 text-xl font-semiblod text-gray-500 my-4">(для заказа выберите желаемые услуги слева от
-            названия)</h2>
-    </li>
+  {% if show_schedule %}
+    <h2 class="text-2xl font-bold mt-8">Расписание</h2>
+    <table class="table-auto border-collapse border border-gray-400 mt-4">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 bg-gray-200">Время</th>
+          <th class="px-4 py-2 bg-gray-200">Клиент</th>
+          <th class="px-4 py-2 bg-gray-200">Процедуры</th>
+          <th class="px-4 py-2 bg-gray-200">Стоимость</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border px-4 py-2">10:00</td>
+          <td class="border px-4 py-2">Имя клиента 1</td>
+          <td class="border px-4 py-2">Процедура 1, Процедура 2</td>
+          <td class="border px-4 py-2">100$</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2">11:00</td>
+          <td class="border px-4 py-2">Имя клиента 2</td>
+          <td class="border px-4 py-2">Процедура 3</td>
+          <td class="border px-4 py-2">50$</td>
+        </tr>
+        <!-- Добавьте остальные записи расписания здесь -->
+      </tbody>
+    </table>
 
-    <li class="flex items-center">
-        <form method="get">
-            <div class="flex items-center mb-4">
-                <select name="price_range" onchange="this.form.submit()"
-                        class="border-b-2 border-r-2 border-gray-300 rounded-md py-1 px-2 bg-white">
-                    <option value="all" {% if price_range == 'all' %}selected{% endif %}>Все</option>
-                    <option value="cheap" {% if price_range == 'cheap' %}selected{% endif %}>Сначала дешевые</option>
-                    <option value="expensive" {% if price_range == 'expensive' %}selected{% endif %}>Сначала дорогие</option>
-                    <option value="category" {% if price_range == 'category' %}selected{% endif %}>По категориям</option>
-                </select>
-            </div>
-        </form>
+  <a href="/client/" class="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 mt-4 max-w-sm rounded">
+    <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 012 0v3z" clip-rule="evenodd" />
+    </svg>
+    Add Client
+  </a>
+  {% endif %}
 
-    <a href="#"
-       class="ml-4 text-green-600 border-2 border-green-500 hover:bg-green-500 hover:text-white active:bg-green-600 font-bold px-8 py-3 rounded outline-none focus:outline-none">Заказать
-        выбранные услуги</a>
-    </li>
-
-
-
-    {% for category in categories %}
-    <h2 id="{{ category.id }}" class="category text-xl py-1 border-b-2 border-gray-400 font-normal my-4">{{ category.name }}</h2>
-    <ul>
-        {% for service in services %}
-        {% if service.category == category %}
-        <li class="flex items-center mb-2">
-            <input class="mr-4" type="checkbox" name="services" value="{{ service.id }}">
-            <span class="font-light">{{ service.name }}</span>
-            <span class="font-light mx-2">-</span>
-            <span class="font-extrabold">{{ service.price }} BYN</span>
-        </li>
-
-        {% endif %}
-        {% endfor %}
-    </ul>
-    {% endfor %}
-
+  {% if show_clients %}
+    <h2 class="text-2xl font-bold mt-8">Информация о клиентах</h2>
+    <table class="table-auto border-collapse border border-gray-400 mt-4">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 bg-gray-200">Имя клиента</th>
+          <th class="px-4 py-2 bg-gray-200">Процедуры</th>
+          <th class="px-4 py-2 bg-gray-200">Стоимость</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border px-4 py-2">Имя клиента 1</td>
+          <td class="border px-4 py-2">Процедура 1, Процедура 2</td>
+          <td class="border px-4 py-2">100$</td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2">Имя клиента 2</td>
+          <td class="border px-4 py-2">Процедура 3</td>
+          <td class="border px-4 py-2">50$</td>
+        </tr>
+        <!-- Добавьте остальные клиенты и их информацию здесь -->
+      </tbody>
+    </table>
+  {% endif %}
 </div>
+{% else %}
+ <div class="flex items-center justify-center">
+  <a href="#" class="text-blue-500 hover:text-blue-600 font-bold text-lg">Clickable Text</a>
+</div>
+{% endif %}
 {% endblock %}
-

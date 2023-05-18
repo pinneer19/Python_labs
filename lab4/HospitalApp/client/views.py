@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.shortcuts import render, reverse, redirect
 from .forms import ClientSignUpForm, PassportForm
+from service.models import Service, ServiceCategory
+
 
 User = get_user_model()
 
@@ -28,7 +30,7 @@ def register_client(request):
             client.save()
 
             # return redirect('/login/')
-            return redirect(reverse('hospital:login'))
+            return redirect('/login/')
         else:
             print(form.errors)
     data = {
@@ -39,4 +41,23 @@ def register_client(request):
 
 
 def info(request):
-    return render(request, 'client/info.html')
+    price_range = request.GET.get('price_range', 'all')
+
+    if price_range == 'cheap':
+        services = Service.objects.order_by('price')
+    elif price_range == 'expensive':
+        services = Service.objects.order_by('-price')
+    else:
+        services = Service.objects.all()
+
+    if price_range == 'category':
+        categories = ServiceCategory.objects.order_by('name')
+    else:
+        categories = ServiceCategory.objects.all()
+
+    context = {
+        'categories': categories,
+        'services': services,
+        'price_range': price_range,
+    }
+    return render(request, 'client/info.html', context)

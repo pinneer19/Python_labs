@@ -34,4 +34,6 @@ def register_doctor(request):
 
 
 def info(request):
-    return render(request, 'doctor/info.html')
+    show_schedule = request.GET.get('show_schedule')
+    show_clients = request.GET.get('show_clients')
+    return render(request, 'doctor/info.html', {'show_schedule': show_schedule, 'show_clients': show_clients})

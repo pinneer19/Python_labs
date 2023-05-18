@@ -6,7 +6,7 @@ from django.forms import TextInput, PasswordInput, CharField, DateInput, Select
 class LoginForm(AuthenticationForm):
     username = CharField(widget=TextInput(attrs={
         'class': 'w-full py-4 px-6 rounded-xl',
-        'placeholder': 'Логин'
+        'placeholder': 'Логин / Паспорт'
     }))
     password = CharField(widget=PasswordInput(attrs={
         'class': 'w-full py-4 px-6 rounded-xl',
