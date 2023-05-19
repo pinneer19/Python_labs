@@ -21,7 +21,7 @@
                 <a href="/doctor/info" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
                 {{ request.user.get_username }}</a>
             {% else %}
-            <a href="/superuser/info" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
+            <a href="/main" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
                 {{ request.user.get_username }}</a>
             {% endif %}
             <a href="{% url 'logout' %}"

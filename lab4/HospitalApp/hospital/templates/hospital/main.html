@@ -1,10 +1,123 @@
 {% extends 'hospital/base.html' %}
+{% load static %}
 
-{% block title %}Авторизация{% endblock %}
+{% block title %}Страница суперюзера{% endblock %}
 
 {% block content %}
-<div class="w-1/2 my-6 mx-auto p-6 bg-gray-100 rounded-xl">
-    <h1 class="mb-6 text-3xl">Страница суперюзера</h1>
-</div>
+{% if request.user.is_authenticated %}
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<div class="container mx-auto">
+    <div class="flex justify-center items-center">
+        <a href="{% url 'superuser' %}?show_services=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Список услуг</a>
+        <a href="{% url 'superuser' %}?show_doctors=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Список врачей</a>
+        <a href="{% url 'superuser' %}?show_clients=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Список клиентов</a>
+        <a href="{% url 'superuser' %}?show_visits=true" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded m-2">Планируемые посещения</a>
+    </div>
+
+    {% if show_doctors %}
+    <h2 class="text-2xl font-bold mt-8">Расписание</h2>
+    <table class="table-auto border-collapse border border-gray-400 mt-4">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200">ФИО</th>
+            <th class="px-4 py-2 bg-gray-200">Специализация</th>
+            <th class="px-4 py-2 bg-gray-200">Отделение</th>
+            <th class="px-4 py-2 bg-gray-200">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for doctor in doctors %}
+        <tr>
+            <td class="border px-4 py-2">{{ doctor }}</td>
+            <td class="border px-4 py-2">{{ doctor.specialization }}</td>
+            <td class="border px-4 py-2">{{ doctor.department }}</td>
+            <td class="border px-4 py-2"><a href = "#">Изменить</a> | <a href = "#">Удалить</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="/client/"
+       class="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 mt-4 max-w-sm rounded">
+        <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-9h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 012 0v3z"
+                  clip-rule="evenodd"/>
+        </svg>
+        Add Client
+    </a>
+    {% elif show_clients %}
+    <h2 class="text-2xl font-bold mt-8">Информация о клиентах</h2>
+    <table class="table-auto border-collapse border border-gray-400 mt-4">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200">ФИО</th>
+            <th class="px-4 py-2 bg-gray-200">Серия и номер паспорта</th>
+            <th class="px-4 py-2 bg-gray-200">Адрес</th>
+            <th class="px-4 py-2 bg-gray-200">Дата рождения</th>
+            <th class="px-4 py-2 bg-gray-200">Телефон</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+        <tr>
+            <td class="border px-4 py-2">{{ client }}</td>
+            <td class="border px-4 py-2">{{ client.passport }}</td>
+            <td class="border px-4 py-2">{{ client.address }}</td>
+            <td class="border px-4 py-2">{{ client.birthday }}</td>
+            <td class="border px-4 py-2">{{ client.phone }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% elif show_services %}
+
+    <div class="flex items-center my-4">
+        <h2 class="text-2xl font-bold mr-4">Информация об актуальных услугах</h2>
+        <a href="{% url 'add_item' 'service' %}" class="flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg    ">
+            <svg class="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+            </svg>
+                Добавить услугу
+        </a>
+    </div>
+    <table class="table-auto border-collapse border border-gray-400 mt-4">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 bg-gray-200">Название</th>
+            <th class="px-4 py-2 bg-gray-200">Категория</th>
+            <th class="px-4 py-2 bg-gray-200">Стоимость</th>
+            <th class="px-4 py-2 bg-gray-200">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+        <tr>
+            <td class="border px-4 py-2">{{ service.name }}</td>
+            <td class="border px-4 py-2">{{ service.category }}</td>
+            <td class="border px-4 py-2">{{ service.price }}</td>
+
+            <!-- <a class="hover:text-blue-900 text-blue-500" href = "/">Изменить</a> | <a class="hover:text-blue-900 text-blue-500" href = "#">Удалить</a> !-->
+            <td class="border px-4 py-2 flex">
+                <a class="px-2 text-blue-500 hover:text-blue-900" href="{% url 'edit_item' 'service' service.id %}">Изменить</a>|
+                <form class="px-2" action="{% url 'delete_service' service.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_type" value="service">
+                <button class="text-blue-500 hover:text-blue-900" type="submit">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% elif show_visits %}
+    <p>Visits</p>
+    {% endif %}
+</div>
+{% else %}
+<div class="flex items-center justify-center">
+  <a href="/login/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница доступна только после авторизации!</a>
+</div>
+{% endif %}
 {% endblock %}

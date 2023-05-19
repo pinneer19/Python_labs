@@ -11,6 +11,10 @@ urlpatterns = [
     path('doctor/', include('doctor.urls'), name='info_doctor'),
     path('login/', views_auth.LoginView.as_view(template_name='hospital/login.html', authentication_form=LoginForm), name='login'),
     path('info/', views.info, name='info'),
+    path('main/', views.main, name='superuser'),
+    path('add/<str:item_type>', views.add_item, name='add_item'),
+    path('delete/service/<int:item_id>/', views.delete_service, name='delete_service'),
+    path('edit/<str:item_type>/<int:item_id>/', views.edit_item, name='edit_item'),
     # re_path(r'^info', include('service.urls')),
     path('', views.index),
 ]
