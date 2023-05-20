@@ -2,8 +2,9 @@ import base64
 import builtins
 import inspect
 import math
+from collections.abc import Iterable
 
-from .constants import PRIMITIVE_TYPES
+from constants import PRIMITIVE_TYPES, DEFAULT_COLLECTIONS, ITERATOR_TYPE, BYTES_TYPE
 
 from types import ModuleType, CellType, FunctionType, \
     MethodType, CodeType
@@ -13,10 +14,12 @@ class Converter:
     def convert(self, obj):
         if isinstance(obj, PRIMITIVE_TYPES):
             return obj
-        elif isinstance(obj, (list, tuple, set, dict)):
-            return self._pack_collection(obj)
-        elif self.__is_iter(obj):
-            return self._pack_iterable(obj)
+        elif isinstance(obj, bytes):
+            return self._convert_bytes(obj)
+        elif isinstance(obj, DEFAULT_COLLECTIONS):
+            return self._convert_collection(obj)
+        elif isinstance(obj, Iterable):  # test
+            return self._convert_iterable(obj)
         elif isinstance(obj, (FunctionType, MethodType)):
             return self._pack_function(obj)
         elif inspect.isclass(obj):
@@ -25,17 +28,31 @@ class Converter:
             return self._pack_module(obj)
         ...
 
-    def unpack(self, obj):
+    def deconvert(self, obj):
         pass
 
-    def __is_iter(self, obj):
-        return hasattr(obj, '__iter__') and hasattr(obj, '__next__')
+    def _convert_collection(self, obj):
+        if isinstance(obj, dict):
+            return {key: self.convert(value) for key, value in obj.items()}
+        if isinstance(obj, list):
+            return [self.convert(item) for item in obj]
+        else:
+            return {
+                '__type__': type(obj).__name__,
+                '__data__': [self.convert(item) for item in obj]
+            }
 
-    def _pack_collection(self, obj):
-        pass
+    def _convert_bytes(self, obj):
+        return {
+            '__type__': BYTES_TYPE,
+            '__data__': obj.hex()  # convert bytes to hex string
+        }
 
-    def _pack_iterable(self, obj):
-        pass
+    def _convert_iterable(self, obj):
+        return {
+            '__type__': ITERATOR_TYPE,
+            '__data__': [self.convert(item) for item in obj]
+        }
 
     def _pack_function(self, obj):
         pass

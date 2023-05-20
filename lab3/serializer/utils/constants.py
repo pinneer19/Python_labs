@@ -2,6 +2,9 @@ from types import NoneType, EllipsisType, WrapperDescriptorType, MethodDescripto
     MappingProxyType, GetSetDescriptorType
 
 PRIMITIVE_TYPES = (int, float, complex, str, bool, NoneType, EllipsisType)
+DEFAULT_COLLECTIONS = (list, set, dict, tuple)
+ITERATOR_TYPE = 'iterator'
+BYTES_TYPE = 'bytes'
 
 IGNORE_DUNDER = (
     "__mro__",
