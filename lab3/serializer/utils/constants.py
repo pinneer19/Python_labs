@@ -1,4 +1,3 @@
-
 from types import NoneType, EllipsisType, WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, \
     MappingProxyType, GetSetDescriptorType
 
@@ -8,6 +7,10 @@ ITERATOR_TYPE = 'iterator'
 BYTES_TYPE = 'bytes'
 FUNCTION_TYPE = 'function'
 MODULE_TYPE = 'module'
+CELL_TYPE = 'cell'
+CODE_TYPE = 'code'
+CLASS_TYPE = 'class'
+OBJECT_TYPE = 'object'
 
 IGNORE_DUNDER = (
     "__mro__",
@@ -25,7 +28,7 @@ IGNORE_DUNDER = (
     "__objclass__"
 )
 
-IGNORE_TYPES=(
+IGNORE_TYPES = (
     WrapperDescriptorType,
     MethodDescriptorType,
     BuiltinFunctionType,
@@ -33,7 +36,7 @@ IGNORE_TYPES=(
     GetSetDescriptorType,
 )
 
-IGNORE_CODE=(
+IGNORE_CODE = (
     "co_positions",
     "co_lines",
     "co_exceptiontable",
