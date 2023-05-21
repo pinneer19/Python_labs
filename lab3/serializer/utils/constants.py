@@ -11,7 +11,8 @@ CELL_TYPE = 'cell'
 CODE_TYPE = 'code'
 CLASS_TYPE = 'class'
 OBJECT_TYPE = 'object'
-
+TUPLE_TYPE = 'tuple'
+SET_TYPE = 'set'
 IGNORE_DUNDER = (
     "__mro__",
     "__doc__",
