@@ -2,7 +2,7 @@ from serializer.utils.converter import Converter
 from serializer_interface import ISerializer
 
 
-class Xml(ISerializer):
+class XmlSerializer(ISerializer):
     _data_converter = Converter()
 
     def dump(self, obj, file):
