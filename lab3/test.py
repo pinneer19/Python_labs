@@ -1,68 +1,76 @@
-# class MyObj(object):
-#   def __init__(self):
-#     self.name = 'Chuck Norris'
-#     self.phone = '+6661'
-#
-# obj = MyObj()
-# print(obj.__dict__)
-# print(dir(obj))
+import math
+from serializer.serializers.serializer_factory import SerializerFactory as Factory
 
-import inspect
 
-a = dict()
+def my_decor(meth):
+    def inner(*args, **kwargs):
+        print('I am in my_decor')
+        return meth(*args, **kwargs)
 
-# print(dict(type=int,data=d))
-from types import CellType
+    return inner
 
-print(CellType)
 
-a = bytes(range(10))
-print(a)
-print(a.hex())
+class A:
+    x = 10
+
+    @my_decor
+    def my_sin(self, c):
+        return math.sin(c * self.x)
+
+    @staticmethod
+    def stat():
+        return 145
+
+    def __str__(self):
+        return 'AAAAA'
+
+    def __repr__(self):
+        return 'AAAAA'
 
 
 class B:
-    def hello(self):
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
 
-        self.a = 5
+    @property
+    def prop(self):
+        return self.a * self.b
 
-A = 9
-class A(B):
-    def hello(self):
-        A()
-        a = 5
-
-
-# print(dir(hello))
-
-def get_class(method):
-    cls = getattr(
-        inspect.getmodule(method),
-        method.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0],
-        None
-    )
-    if isinstance(cls, type):
-        return cls
+    @classmethod
+    def class_meth(cls):
+        return math.pi
 
 
-def hello(num2=9):
-    num1 = 9
-    print(9)
+class C(A, B):
+    pass
 
-# print(A().hello.__globals__)
-# print(A().hello.__code__.co_names)
-# print(get_class(A().hello) is not type(A()))
 
-# hello.num1 = 80
-# int.qq = 9
-# print(dict.__dict__)
-#
-# print(hello.__dict__)
-a=10
+ser = Factory.get_serializer('json')
 
-class A(B):
-    def method(self):
-        pass
+# var = 15
+# var_ser = ser.dumps(var)
+# var_des = ser.loads(var_ser)
+# print(var_des)
 
-print(inspect.getmembers(A()))
-print(inspect.getmembers(A))
+C_ser = ser.dumps(C)
+C_des = ser.loads(C_ser)
+
+c = C(1, 2)
+c_ser = ser.dumps(c)
+c_des = ser.loads(c_ser)
+
+print(c_des)
+print(c_des.x)
+print(c_des.my_sin(10))
+print(math.sin(100))
+print(c_des.prop)
+print(C_des.stat())
+print(c_des.class_meth())
+
+
+
+# f = C(1, 2)
+# print(f.my_sin(11))
+
+
