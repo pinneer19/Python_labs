@@ -1,5 +1,5 @@
 from serializer.utils.converter import Converter
-from serializer_interface import ISerializer
+from .serializer_interface import ISerializer
 
 
 class JsonSerializer(ISerializer):
@@ -10,7 +10,6 @@ class JsonSerializer(ISerializer):
 
     def dumps(self, obj):
         converted_data = self._data_converter.convert(obj)
-
         if isinstance(converted_data, (list, tuple)):
             return self._dump_list_and_tuple(converted_data)
 
@@ -32,13 +31,13 @@ class JsonSerializer(ISerializer):
             obj = f"'{obj}'"
         return f'"{str(obj)}"'
 
-    def _dump_dict(self, dict):
-        if not dict:
+    def _dump_dict(self, dictionary):
+        if not dictionary:
             return '{}'
 
         result = '{'
 
-        for key, value in dict.items():
+        for key, value in dictionary.items():
             if isinstance(value, dict):
                 result += f'"{key}": {self._dump_dict(value)},'
             elif isinstance(value, (list, tuple)):

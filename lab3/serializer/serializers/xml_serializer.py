@@ -1,5 +1,5 @@
 from serializer.utils.converter import Converter
-from serializer_interface import ISerializer
+from .serializer_interface import ISerializer
 
 
 class XmlSerializer(ISerializer):
@@ -29,8 +29,8 @@ class XmlSerializer(ISerializer):
     def _dump_list_and_tuple(self, collection):
         return f'<{collection.__class__.__name__}>{"".join([self.dumps(item) for item in collection])}</{collection.__class__.__name__}>'
 
-    def _dump_dict(self, dict):
-        return f'<{dict.__class__.__name__}>{"".join([self._dump_dict_element(key, value) for key, value in dict.items()])}</{dict.__class__.__name__}>'
+    def _dump_dict(self, dictionary):
+        return f'<{dictionary.__class__.__name__}>{"".join([self._dump_dict_element(key, value) for key, value in dictionary.items()])}</{dictionary.__class__.__name__}>'
 
     def _dump_dict_element(self, key, value):
         return f'<item><key>{self.dumps(key)}</key><value>{self.dumps(value)}</value></item>'
@@ -99,11 +99,9 @@ class XmlSerializer(ISerializer):
                 tags_count -= 1
             end_index += 1
         end_index -= 1
-
         while index < end_index:
             item, index = self._loads_xml(string, index)
             result.append(item)
-
         return result, end_index + 7
 
     def _load_dict(self, string, index):

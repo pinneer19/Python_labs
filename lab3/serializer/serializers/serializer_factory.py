@@ -1,5 +1,5 @@
-from json_serializer import JsonSerializer
-from xml_serializer import XmlSerializer
+from .json_serializer import JsonSerializer
+from .xml_serializer import XmlSerializer
 from .serializer_interface import ISerializer
 
 

@@ -1,10 +1,7 @@
-import base64
-import builtins
 import inspect
-import math
 from collections.abc import Iterable
-from utilities import get_class, get_cell, is_func
-from constants import PRIMITIVE_TYPES, DEFAULT_COLLECTIONS, ITERATOR_TYPE, BYTES_TYPE, FUNCTION_TYPE, MODULE_TYPE, \
+from .utilities import get_class, get_cell, is_func
+from .constants import PRIMITIVE_TYPES, DEFAULT_COLLECTIONS, ITERATOR_TYPE, BYTES_TYPE, FUNCTION_TYPE, MODULE_TYPE, \
     CELL_TYPE, IGNORE_CODE, CODE_TYPE, IGNORE_TYPES, IGNORE_DUNDER, CLASS_TYPE, OBJECT_TYPE, TUPLE_TYPE, SET_TYPE
 
 from types import ModuleType, CellType, FunctionType, \
@@ -40,7 +37,7 @@ class Converter:
         if isinstance(obj, PRIMITIVE_TYPES):
             return obj
         if isinstance(obj, list):
-            return [(self.deconvert(item) for item in obj)]
+            return [self.deconvert(item) for item in obj]
         if isinstance(obj, dict):
             if '__type__' in obj.keys():
                 type = obj['__type__']
@@ -128,9 +125,7 @@ class Converter:
         deconverted_function = self.deconvert(obj['__data__'])
 
         dictionary = deconverted_function.pop('dictionary')
-
         new_function = FunctionType(**deconverted_function)
-
         # if obj['__method__'] and self.processed_class_obj != None:
         #     skeleton_func = MethodType(new_function, self.processed_class_obj)
 
@@ -173,7 +168,7 @@ class Converter:
     def _convert_function(self, obj):
         class_name = get_class(obj)
 
-        globs = dict()
+        globs = {}
         for key, value in obj.__globals__.items():
             # __globals__ get all accessible from function global variables
             # __code__ provides access to function bytecode, co_names is tuple containing the names used by the bytecode
@@ -192,7 +187,7 @@ class Converter:
             '__data__': self.convert(
                 dict(
                     code=obj.__code__,
-                    globals=globals,
+                    globals=globs,
                     name=obj.__name__,
                     argdefs=obj.__defaults__,  # A tuple containing defaults for argument with def values
                     closure=closure,
