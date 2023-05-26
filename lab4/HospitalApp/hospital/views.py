@@ -2,12 +2,16 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 from django.contrib.auth import logout
+from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect
 
 from service.models import Service, ServiceCategory
 from service.forms import ServiceForm
 from doctor.models import Doctor
-from client.models import Client
+from client.models import Client, Passport
+from doctor.forms import DoctorSignUpForm
+
+from client.forms import ClientSignUpForm, PassportForm
 
 
 def index(request):
@@ -55,15 +59,24 @@ def logout_user(request):
     return redirect('/login/')
 
 
-def delete_service(request, item_id):
-    item = Service.objects.get(pk=item_id)
-    item.delete()
-    return redirect('/main/?show_services=true')
-
-
-def edit_item(request, item_type, item_id):
+def delete_item(request, item_type, item_id):
     if item_type == 'service':
         service = Service.objects.get(pk=item_id)
+        service.delete()
+        return redirect('/main/?show_services=true')
+    elif item_type == 'doctor':
+        doctor = Doctor.objects.get(pk=item_id)
+        doctor.delete()
+        return redirect('/main/?show_doctors=true')
+    elif item_type == 'client':
+        client = Client.objects.get(pk=item_id)
+        client.delete()
+        return redirect('/main/?show_clients=true')
+
+
+def edit_item(request, item_type, item_id1, item_id2=None):
+    if item_type == 'service':
+        service = Service.objects.get(pk=item_id1)
 
         if request.method == 'POST':
             form = ServiceForm(request.POST, instance=service)
@@ -73,12 +86,48 @@ def edit_item(request, item_type, item_id):
         else:
             form = ServiceForm(instance=service)
 
-        return render(request, 'hospital/edit_service.html', {'form': form})
+        return render(request, 'hospital/edit_item.html',
+                      {'form': form, 'edit_title': 'Редактирование услуги', 'url_show': 'show_services'})
+    elif item_type == 'doctor':
 
-    # Handle other item types if needed
-    # ...
+        doctor = Doctor.objects.get(pk=item_id1)
 
-    # Return an error or redirect to an appropriate page
+        if request.method == 'POST':
+            form = DoctorSignUpForm(request.POST, instance=doctor)
+
+            if form.is_valid():
+                form.save()
+                return redirect('/main/?show_doctors=true')
+        else:
+            print(doctor.password)
+            form = DoctorSignUpForm(instance=doctor)
+
+        return render(request, 'hospital/edit_item.html',
+                      {'form': form, 'edit_title': 'Редактирование врача', 'url_show': 'show_doctors'})
+
+    elif item_type == 'client':
+
+        client = Client.objects.get(pk=item_id1)
+        passport = Passport.objects.get(pk=item_id2)
+        if request.method == 'POST':
+            form = ClientSignUpForm(request.POST, instance=client)
+            passport_form = PassportForm(request.POST, instance=passport)
+
+            if form.is_valid() and passport_form.is_valid():
+                passport = passport_form.save()
+                client = form.save(commit=False)
+                client.passport = passport
+                client.save()
+
+                return redirect('/main/?show_clients=true')
+        else:
+            form = ClientSignUpForm(instance=client)
+            passport_form = PassportForm(instance=passport)
+            print(client.password)
+        return render(request, 'hospital/edit_item.html',
+                      {'form': form, 'passport_form': passport_form, 'edit_title': 'Редактирование клиента',
+                       'url_show': 'show_clients'})
+
     return redirect('/main')  # or return an error response
 
 
@@ -106,7 +155,60 @@ def add_item(request, item_type):
         else:
             form = ServiceForm()
 
-        return render(request, 'hospital/add_service.html', {'form': form})
+        return render(request, 'hospital/add_item.html',
+                      {'form': form, 'add_title': 'Добавление услуги', 'url_show': 'show_services'})
+    elif item_type == 'doctor':
+        if request.method == 'POST':
+            form = DoctorSignUpForm(request.POST)
+            if form.is_valid():
+                doctor = form.save(commit=False)
+
+                user = User.objects.create_user(
+                    username=doctor.login,
+                    password=doctor.password
+                )
+
+                group = Group.objects.get(name='doctor')
+                group.user_set.add(user)
+
+                doctor.user = user
+                doctor.save()
+
+                return redirect('/main/?show_doctors=true')
+        else:
+            form = DoctorSignUpForm()
+
+        return render(request, 'hospital/add_item.html',
+                      {'form': form, 'add_title': 'Добавление врача', 'url_show': 'show_doctors'})
+    elif item_type == 'client':
+        if request.method == 'POST':
+            form = ClientSignUpForm(request.POST)
+            passport_form = PassportForm(request.POST)
+
+            if form.is_valid() and passport_form.is_valid():
+                passport = passport_form.save()
+                client = form.save(commit=False)
+                client.passport = passport
+
+                user = User.objects.create_user(
+                    username=passport.serial + passport.number,
+                    password=form.cleaned_data['password']
+                )
+
+                group = Group.objects.get(name='client')
+                group.user_set.add(user)
+
+                client.user = user
+                client.save()
+
+                return redirect('/main/?show_clients=true')
+        else:
+            form = ClientSignUpForm()
+            passport_form = PassportForm()
+
+            return render(request, 'hospital/add_item.html',
+                          {'form': form, 'passport_form': passport_form, 'add_title': 'Добавление клиента',
+                           'url_show': 'show_clients'})
 
 
 def info(request):

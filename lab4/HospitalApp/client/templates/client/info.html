@@ -6,48 +6,49 @@
 {% block content %}
 {% if request.user.is_authenticated %}
 
-<link rel="stylesheet" href="{% static 'service/css/service.css' %}"/>
+<div class="container justify-center items-center mx-auto px-4">
 
-<p class="text-right px-6 py-3 text-lg font-semibold">{{ timezone }} {{ datetime.date }}</p>
-<div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-center">Выберите услуги для заказа</h2>
+        <form method="post" action="{% url 'order' %}">
+            {% csrf_token %}
+            <div class="flex justify-center mt-4">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">
+                    Заказать
+                </button>
+            </div>
 
-  <h2 class="text-2xl font-bold mb-4">Категории услуг</h2>
-  <ul class="flex flex-wrap gap-4 py-2">
-    {% for category in categories %}
-    <li><a href="#{{ category.id }}" class="text-blue-500 py-2 border-b-2 hover:text-blue-700">{{ category.name }}</a></li>
-    {% endfor %}
-  </ul>
+            {% if not services %}
+            <p class="my-2 text-center text-red-500 mt-4">Не выбрана ни одна услуга!</p>
+            {% endif %}
 
-  <h2 class="text-2xl font-bold my-4">Услуги</h2>
 
-  <form method="post" action=".">
-    {% csrf_token %}
-    <ul>
-      {% for category in categories %}
-      <h2 id="{{ category.id }}" class="category text-xl py-1 border-b-2 border-gray-400 font-normal my-4">{{ category.name }}</h2>
-      {% for service in services %}
-      {% if service.category == category %}
-      <li class="flex items-center mb-2">
-        <input type="checkbox" name="services" value="{{ service.id }}" id="service-{{ service.id }}" class="mr-2">
-        <label for="service-{{ service.id }}" class="font-light">{{ service.name }}</label>
-        <span class="font-light mx-2">-</span>
-        <span class="font-extrabold">{{ service.price }} BYN</span>
-      </li>
-      {% endif %}
-      {% endfor %}
-      {% endfor %}
-    </ul>
-
-    <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-      Create Order
-    </button>
-  </form>
+            <table class="table-auto border-collapse border border-gray-400 mt-4 mx-auto">
+                <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">Название</th>
+                    <th class="px-4 py-2">Цена</th>
+                    <th class="px-4 py-2">Выбрать</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for service in services %}
+                <tr>
+                    <td class="px-4 py-2">{{ service.name }}</td>
+                    <td class="px-4 py-2 text-center">{{ service.price }} BYN</td>
+                    <td class="px-4 py-2 text-center"><input type="checkbox" name="checkbox" value="{{ service.id }}">
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </form>
 
 </div>
+
 {% else %}
 <div class="flex items-center justify-center">
-  <a href="/login/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница доступна только после авторизации!</a>
+    <a href="/login/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница доступна только после
+        авторизации!</a>
 </div>
 {% endif %}
 {% endblock %}
-
