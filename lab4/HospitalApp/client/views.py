@@ -80,17 +80,14 @@ def finish_order(request):
             services = request.POST.getlist('service_id')
             dates = request.POST.getlist('data[]')
             doctors = request.POST.getlist('doctor')
-            print(client, services, dates, doctors)
-            print(strptime(dates[0], '%Y-%m-%d'))
 
-            # order = Order.objects.create(client=client, date=datetime.date.today())
-            # for service_id, date, doctor_id in zip(services, dates, doctors):
-            #     service = Service.objects.get(pk=service_id)
-            #     doctor = Doctor.objects.get(pk=doctor_id)
-            #
-            #     OrderService.objects.create(order=order, service=service, doctor=doctor, date=date)
+            order = Order.objects.create(client=client, date=datetime.date.today())
+            for service_id, date, doctor_id in zip(services, dates, doctors):
+                service = Service.objects.get(pk=service_id)
+                doctor = Doctor.objects.get(pk=doctor_id)
+                OrderService.objects.create(order=order, service=service, doctor=doctor, date=date)
 
-            return render(request, 'client/success_page.html')  # Replace 'success_page' with the actual URL or name of the success page
+            return render(request, 'client/success_page.html')
 
     else:
-        return redirect('login')  # Replace 'login' with the actual URL or name of the login page
+        return redirect('login')

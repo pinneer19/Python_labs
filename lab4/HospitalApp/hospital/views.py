@@ -1,17 +1,21 @@
+import json
 from datetime import datetime, timedelta, timezone
 
 import requests
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import ValidationError
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
-
+from order.models import Order, OrderService
 from service.models import Service, ServiceCategory
 from service.forms import ServiceForm
 from doctor.models import Doctor
 from client.models import Client, Passport
 from doctor.forms import DoctorSignUpForm
-
+from order.forms import OrderForm, OrderServiceForm
 from client.forms import ClientSignUpForm, PassportForm
+from visit.models import Visit
 
 
 def index(request):
@@ -72,6 +76,10 @@ def delete_item(request, item_type, item_id):
         client = Client.objects.get(pk=item_id)
         client.delete()
         return redirect('/main/?show_clients=true')
+    elif item_type == 'order':
+        order = Order.objects.get(pk=item_id)
+        order.delete()
+        return redirect('/main/?show_orders=true')
 
 
 def edit_item(request, item_type, item_id1, item_id2=None):
@@ -123,10 +131,39 @@ def edit_item(request, item_type, item_id1, item_id2=None):
         else:
             form = ClientSignUpForm(instance=client)
             passport_form = PassportForm(instance=passport)
-            print(client.password)
+
         return render(request, 'hospital/edit_item.html',
                       {'form': form, 'passport_form': passport_form, 'edit_title': 'Редактирование клиента',
                        'url_show': 'show_clients'})
+    elif item_type == 'order':
+
+        order = Order.objects.get(pk=item_id1)
+        order_data = []
+        order_services = OrderService.objects.all()
+        for order_service in order_services:
+            if order_service.order == order:
+                order_data.append(order_service.service.name)
+
+        if request.method == 'POST':
+            order_form = OrderForm(request.POST, instance=order)
+
+            if order_form.is_valid():
+                order = order_form.save()
+                order_form_data = model_to_dict(order)
+                order_form_data['date'] = order.date.strftime('%Y-%m-%d')
+
+                order_json = json.dumps(order_form_data)
+
+                request.session['order'] = order_json
+                request.session['services'] = order_data
+                return redirect('/add/order/services/')
+
+        else:
+            order_form = OrderForm(instance=order)
+
+        return render(request, 'hospital/add_item.html',
+                      {'form': order_form, 'add_title': 'Изменение заказа',
+                       'url_show': 'show_orders'})
 
     return redirect('/main')  # or return an error response
 
@@ -135,14 +172,58 @@ def main(request):
     show_doctors = request.GET.get('show_doctors')
     show_clients = request.GET.get('show_clients')
     show_services = request.GET.get('show_services')
+    show_orders = request.GET.get('show_orders')
+    show_planned_visits = request.GET.get('planned_visits')
     show_visits = request.GET.get('show_visits')
+    show_result = request.GET.get('show_result')
+    sort_by_date = request.GET.get('sort_by_date')
 
     services = Service.objects.all()
     doctors = Doctor.objects.all()
     clients = Client.objects.all()
+    orders = Order.objects.all()
+    selected_client = request.GET.get('client')
+
+    if selected_client:
+        order_services = OrderService.objects.filter(order__client_id=selected_client)
+    else:
+        order_services = OrderService.objects.all()
+
+    if sort_by_date == 'true':
+        order_services = order_services.order_by('date')
+
+    order_data = {}  # Dictionary to store order data
+
+    for order in orders:
+        data = []
+        for order_service in order_services:
+            if order_service.order == order:
+                data.append(order_service.service.name)
+
+        order_data[order.id] = data  # Store the data for each order in the dictionary
+
+    total_cost = 0.0
+    if show_result:
+
+        client = request.GET.get('client')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        doctor = request.GET.get('doctor')
+
+        if client and start_date and end_date and doctor:
+            visits_date_range = Visit.objects.filter(visit_date__range=[start_date, end_date])
+            client_visits_for_doctor = visits_date_range.filter(client=client, doctor=doctor)
+
+            for visit in client_visits_for_doctor:
+                total_cost += visit.service.price
+
     return render(request, 'hospital/main.html',
-                  {'show_doctors': show_doctors, 'show_clients': show_clients, 'show_visits': show_visits,
-                   'show_services': show_services, 'services': services, 'doctors': doctors, 'clients': clients})
+                  {'show_doctors': show_doctors, 'show_clients': show_clients, 'show_orders': show_orders,
+                   'show_services': show_services, 'services': services, 'doctors': doctors, 'clients': clients,
+                   'orders': orders, 'order_data': order_data, 'order_services': order_services,
+                   'planned_visits': show_planned_visits, 'sort_by_date': sort_by_date,
+                   'selected_client': selected_client, 'show_visits': show_visits, 'total_cost': total_cost,
+                   'show_result': show_result})
 
 
 def add_item(request, item_type):
@@ -157,6 +238,26 @@ def add_item(request, item_type):
 
         return render(request, 'hospital/add_item.html',
                       {'form': form, 'add_title': 'Добавление услуги', 'url_show': 'show_services'})
+    elif item_type == 'order':
+        if request.method == 'POST':
+            order_form = OrderForm(request.POST)
+
+            if order_form.is_valid():
+                order = order_form.save()
+                order_data = model_to_dict(order)
+                order_data['date'] = order.date.strftime('%Y-%m-%d')
+                order_json = json.dumps(order_data)
+
+                # Store the order JSON in the session
+                request.session['order'] = order_json
+                return redirect('services/')
+
+        else:
+            order_form = OrderForm()
+
+        return render(request, 'hospital/add_item.html',
+                      {'form': order_form, 'add_title': 'Добавление заказа',
+                       'url_show': 'show_orders'})
     elif item_type == 'doctor':
         if request.method == 'POST':
             form = DoctorSignUpForm(request.POST)
@@ -206,9 +307,9 @@ def add_item(request, item_type):
             form = ClientSignUpForm()
             passport_form = PassportForm()
 
-            return render(request, 'hospital/add_item.html',
-                          {'form': form, 'passport_form': passport_form, 'add_title': 'Добавление клиента',
-                           'url_show': 'show_clients'})
+        return render(request, 'hospital/add_item.html',
+                      {'form': form, 'passport_form': passport_form, 'add_title': 'Добавление клиента',
+                       'url_show': 'show_clients'})
 
 
 def info(request):
@@ -219,3 +320,30 @@ def info(request):
         return redirect('/client/info')
     else:
         return redirect('/doctor/info')
+
+
+def add_services_to_order(request):
+    order = request.session.get('order')
+    services = request.session.get('services', None)
+
+    if request.method == 'POST':
+
+        order_service_form = OrderServiceForm(request.POST)
+
+        if order_service_form.is_valid():
+            order_service = order_service_form.save(commit=False)
+
+            json_data = json.loads(order)
+            order_service.order = Order(client=Client.objects.get(id=json_data['client']), date=json_data['date'],
+                                        id=json_data['id'])
+            order_service.save()
+
+            del request.session['order']
+
+            return redirect('/main/?show_orders=true')
+    else:
+        order_service_form = OrderServiceForm()
+
+    return render(request, 'hospital/add_item.html',
+                  {'form': order_service_form, 'services': services, 'add_title': 'Добавление услуги',
+                   'url_show': 'show_orders'})

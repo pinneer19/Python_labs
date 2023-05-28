@@ -13,7 +13,7 @@
         <h2 class="text-2xl font-bold text-center mb-4">{{ service.name }}</h2>
         <div>
             <label for="data-{{ service.id }}" class="font-bold mt-2">Выберите дату:</label>
-            <input type="date" name="data[]" value="{{ service.id }}" id="data-{{ service.id }}" min="{{ date }}"
+            <input type="date" name="data[]" value="{{ service.id }}" id="data-{{ service.id }}" min="{{ date }}" required
                    class="my-4 border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
             <!-- Render options for data selection -->
             </input>
