@@ -45,7 +45,7 @@
             <td class="border px-4 text-center py-2">{{ order_service.service.price }}</td>
             <td class="border px-4 py-2">
                 <div class="flex justify-center items-center h-full">
-                    <form method="POST" action="{% url 'complete_service' order_service.id %}">
+                    <form method="GET" action="{% url 'complete_service' order_service.id %}">
                         {% csrf_token %}
                         <button type="submit"
                                 class="flex items-center justify-center w-9 h-9 bg-teal-500 hover:bg-teal-700 text-white font-bold rounded-full focus:outline-none focus:shadow-outline">
@@ -61,7 +61,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <h2 class="text-2xl font-bold mt-8">Итоговая стоимость заказанных услуг: {{ total_cost }} byn</h2>
+    <h2 class="text-2xl font-bold mt-8">{{ total_cost }}</h2>
 
 
 </div>

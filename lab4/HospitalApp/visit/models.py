@@ -7,6 +7,7 @@ from service.models import Service
 class Visit(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, verbose_name='Врач')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Клиент')
+    diagnosis = models.CharField('Диагноз', max_length=50, default='')
     visit_date = models.DateTimeField(verbose_name='Дата посещения')
     service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE, verbose_name='Предоставляемая услуга')
 

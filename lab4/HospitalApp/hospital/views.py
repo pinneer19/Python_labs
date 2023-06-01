@@ -30,30 +30,35 @@ def index(request):
 
     tz = timezone(timedelta(hours=hours, minutes=minutes))
 
-    price_range = request.GET.get('price_range', 'all')
+    start_price = request.GET.get('start_price')
+    end_price = request.GET.get('end_price')
 
-    if price_range == 'cheap':
-        services = Service.objects.order_by('price')
-    elif price_range == 'expensive':
-        services = Service.objects.order_by('-price')
+    if start_price and end_price:
+        start_price = float(start_price)
+        end_price = float(end_price)
+        services = Service.objects.filter(price__gte=start_price, price__lte=end_price)
     else:
         services = Service.objects.all()
 
-    if price_range == 'category':
-        categories = ServiceCategory.objects.order_by('name')
-    else:
-        categories = ServiceCategory.objects.all()
+    categories = ServiceCategory.objects.all()
+    selected_category = request.GET.get('category')
+    category = None
+    if selected_category:
+        services = services.filter(category_id=selected_category)
+        category = categories.get(id=selected_category)
+
     data = {
         'timezone': tz,
         'datetime': datetime.now(tz),
         'categories': categories,
         'services': services,
-        'price_range': price_range,
+        'start_price': start_price,
+        'end_price': end_price,
+        'selected_category': selected_category,
+        'category_by_id': category
     }
 
     return render(request, 'hospital/index.html', data)
-
-
 def contact(request):
     return render(request, 'hospital/contact.html')
 
@@ -177,7 +182,7 @@ def main(request):
     show_visits = request.GET.get('show_visits')
     show_result = request.GET.get('show_result')
     sort_by_date = request.GET.get('sort_by_date')
-
+    show_patients = request.GET.get('show_patients')
     services = Service.objects.all()
     doctors = Doctor.objects.all()
     clients = Client.objects.all()
@@ -204,7 +209,6 @@ def main(request):
 
     total_cost = 0.0
     if show_result:
-
         client = request.GET.get('client')
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')
@@ -217,13 +221,24 @@ def main(request):
             for visit in client_visits_for_doctor:
                 total_cost += visit.service.price
 
+    patients_list = []
+    if show_patients:
+        selected_doctor = request.GET.get('doctor')
+        print(selected_doctor)
+        if selected_doctor:
+            order_services_patients = set(
+                order_service.order.client for order_service in order_services if selected_doctor == order_service.doctor)
+            visits_patients = set(visit.client for visit in Visit.objects.filter(doctor=selected_doctor))
+
+            patients_list = order_services_patients.union(visits_patients)
+
     return render(request, 'hospital/main.html',
                   {'show_doctors': show_doctors, 'show_clients': show_clients, 'show_orders': show_orders,
                    'show_services': show_services, 'services': services, 'doctors': doctors, 'clients': clients,
                    'orders': orders, 'order_data': order_data, 'order_services': order_services,
                    'planned_visits': show_planned_visits, 'sort_by_date': sort_by_date,
                    'selected_client': selected_client, 'show_visits': show_visits, 'total_cost': total_cost,
-                   'show_result': show_result})
+                   'show_result': show_result, 'show_patients': show_patients, 'patients_list': patients_list})
 
 
 def add_item(request, item_type):

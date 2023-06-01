@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from .forms import DoctorSignUpForm
 from order.models import OrderService, Order
 from visit.models import Visit
+from visit.forms import VisitForm
 
 User = get_user_model()
 
@@ -53,24 +54,52 @@ def info(request):
 
     if total_cost == 0.0:
         total_cost = 'Нет заказанных услуг'
+    else:
+        total_cost = f'Итоговая стоимость заказанных услуг: {total_cost} byn'
     return render(request, 'doctor/info.html',
                   {'order_services': order_services,
                    'date': str(datetime.date.today()), 'total_cost': total_cost})
 
 
-@require_POST
 def complete_service(request, item_id):
     order_service = OrderService.objects.get(pk=item_id)
+    form = VisitForm(request.POST or None)
+    if request.method == 'POST':
 
-    visit = Visit.objects.create(
-        doctor=order_service.doctor,
-        client=order_service.order.client,
-        visit_date=order_service.date,
-        service=order_service.service
-    )
+        if form.is_valid():
 
-    visit.save()
-    if not len(OrderService.objects.filter(order=order_service.order)):
-        Order.objects.get(order_service.order.id)
-    order_service.delete()
-    return redirect('/doctor/info')
+            visit = Visit.objects.create(
+                doctor=order_service.doctor,
+                client=order_service.order.client,
+                visit_date=order_service.date,
+                service=order_service.service,
+                diagnosis=form.cleaned_data['diagnosis']
+            )
+            if not len(OrderService.objects.filter(order=order_service.order)):
+                Order.objects.get(order_service.order.id).delete()
+            order_service.delete()
+            return redirect('/doctor/info')
+
+        else:
+            print(form.errors)
+
+    data = {
+        'form': form
+    }
+
+    return render(request, 'doctor/complete_service.html', {'form': form})
+
+    # order_service = OrderService.objects.get(pk=item_id)
+    #
+    # visit = Visit.objects.create(
+    #     doctor=order_service.doctor,
+    #     client=order_service.order.client,
+    #     visit_date=order_service.date,
+    #     service=order_service.service
+    # )
+    #
+    # visit.save()
+    # if not len(OrderService.objects.filter(order=order_service.order)):
+    #     Order.objects.get(order_service.order.id)
+    # order_service.delete()
+    # return redirect('/doctor/info')
