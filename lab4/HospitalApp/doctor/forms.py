@@ -1,6 +1,6 @@
-from django.forms import ModelForm, TextInput, Select, PasswordInput
+from django.forms import ModelForm, TextInput, Select, PasswordInput, ModelMultipleChoiceField, SelectMultiple
 
-from .models import Doctor
+from .models import Doctor, Specialization
 
 
 class DoctorSignUpForm(ModelForm):
@@ -26,10 +26,10 @@ class DoctorSignUpForm(ModelForm):
                 'class': 'w-full py-4 px-6 rounded-xl bg-white',
                 'placeholder': 'Отделение'
             }),
-            "specialization": Select(attrs={
-                'class': 'w-full py-4 px-6 rounded-xl bg-white',
-                'data-placeholder': 'Специализация'
-            }),
+            # "specialization": Select(attrs={
+            #     'class': 'w-full py-4 px-6 rounded-xl bg-white',
+            #     'data-placeholder': 'Специализация'
+            # }),
             "login": TextInput(attrs={
                 'class': 'w-full py-4 px-6 rounded-xl',
                 'placeholder': 'Логин'
@@ -39,6 +39,12 @@ class DoctorSignUpForm(ModelForm):
                 'placeholder': 'Пароль'
             })
         }
+    specialization = ModelMultipleChoiceField(
+        queryset=Specialization.objects.all(),
+        widget=SelectMultiple(attrs={
+            'class': 'w-full py-4 px-6 rounded-xl'
+        })
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

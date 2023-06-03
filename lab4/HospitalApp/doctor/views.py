@@ -1,6 +1,9 @@
 import datetime
+import logging
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import Group
 from django.views.decorators.http import require_POST
@@ -10,9 +13,11 @@ from visit.models import Visit
 from visit.forms import VisitForm
 
 User = get_user_model()
+logger=logging.getLogger('main')
 
 
 def register_doctor(request):
+    logger.info('doctor register')
     form = DoctorSignUpForm(request.POST or None)
     if request.method == 'POST':
 
@@ -39,7 +44,9 @@ def register_doctor(request):
     return render(request, 'doctor/signup_doctor.html', data)
 
 
+@permission_required('doctor.view_doctor', raise_exception=True)
 def info(request):
+    logger.info('doctor page')
     selected_date = request.POST.get('date')
 
     doctor = request.user.doctor
@@ -62,6 +69,7 @@ def info(request):
 
 
 def complete_service(request, item_id):
+    logger.info('doctor complete ordered service')
     order_service = OrderService.objects.get(pk=item_id)
     form = VisitForm(request.POST or None)
     if request.method == 'POST':
@@ -88,18 +96,3 @@ def complete_service(request, item_id):
     }
 
     return render(request, 'doctor/complete_service.html', {'form': form})
-
-    # order_service = OrderService.objects.get(pk=item_id)
-    #
-    # visit = Visit.objects.create(
-    #     doctor=order_service.doctor,
-    #     client=order_service.order.client,
-    #     visit_date=order_service.date,
-    #     service=order_service.service
-    # )
-    #
-    # visit.save()
-    # if not len(OrderService.objects.filter(order=order_service.order)):
-    #     Order.objects.get(order_service.order.id)
-    # order_service.delete()
-    # return redirect('/doctor/info')

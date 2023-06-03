@@ -4,7 +4,7 @@
 {% block title %}Страница суперюзера{% endblock %}
 
 {% block content %}
-{% if request.user.is_authenticated %}
+{% if request.user.is_authenticated and request.user.is_superuser %}
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 <div class="container mx-auto">
@@ -50,7 +50,14 @@
         {% for doctor in doctors %}
         <tr>
             <td class="border px-4 py-2">{{ doctor }}</td>
-            <td class="border px-4 py-2">{{ doctor.specialization }}</td>
+            <td class="border px-4 py-2">
+                {% for specialization in doctor.specialization.all %}
+                {{ specialization.name }}
+                {% if not forloop.last %}, {% endif %}
+                {% empty %}
+                Нет специализаций
+                {% endfor %}
+            </td>
             <td class="border px-4 py-2">{{ doctor.department }}</td>
             <td class="border px-4 py-2 flex">
                 <a class="px-2 text-blue-500 hover:text-blue-900" href="{% url 'edit_item' 'doctor' doctor.id 0 %}">Изменить</a>|
@@ -298,7 +305,7 @@
     <div class="items-center my-4">
         <h2 class="text-2xl font-bold mr-4 my-4">Информация о пациентах врача</h2>
         <form method="get">
-             <input type="hidden" name="show_patients" value="true">
+            <input type="hidden" name="show_patients" value="true">
             <div class="flex flex-wrap -mx-2 mb-4">
                 <div class="w-full md:w-1/4 px-2">
                     <label for="doctor" class="block mb-1">Выберите врача:</label>

@@ -1,11 +1,14 @@
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 import requests
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
+from django.db.models import Avg
 from django.forms import model_to_dict
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, redirect
 from order.models import Order, OrderService
 from service.models import Service, ServiceCategory
@@ -16,14 +19,24 @@ from doctor.forms import DoctorSignUpForm
 from order.forms import OrderForm, OrderServiceForm
 from client.forms import ClientSignUpForm, PassportForm
 from visit.models import Visit
+import matplotlib.pyplot as plt
+import logging
+
+logger = logging.getLogger('main')
 
 
 def index(request):
+    logger.info('default page loading')
     api_key = 'at_0sitq5Xogpxhk2Sdt4n6ulMUdumrw'
     url_ip = 'https://api64.ipify.org/?format=json'
-    ip = requests.get(url_ip).json()['ip']
+    logger.info('sending API requests')
+    try:
 
+        ip = requests.get(url_ip).json()['ip']
+    except requests.exceptions.ConnectionError:
+        return HttpResponseBadRequest('<h1>Проверьте доступ к интернету!</h1>')
     url = f'https://geo.ipify.org/api/v2/country?apiKey={api_key}&ipAddress={ip}'
+
     offset = requests.get(url.format(ip)).json()['location']['timezone']
 
     hours, minutes = map(int, offset.split(':'))
@@ -37,6 +50,12 @@ def index(request):
         start_price = float(start_price)
         end_price = float(end_price)
         services = Service.objects.filter(price__gte=start_price, price__lte=end_price)
+    elif start_price:
+        start_price = float(start_price)
+        services = Service.objects.filter(price__gte=start_price)
+    elif end_price:
+        end_price = float(end_price)
+        services = Service.objects.filter(price__lte=end_price)
     else:
         services = Service.objects.all()
 
@@ -59,16 +78,21 @@ def index(request):
     }
 
     return render(request, 'hospital/index.html', data)
+
+
 def contact(request):
     return render(request, 'hospital/contact.html')
 
 
 def logout_user(request):
+    logger.info('user logout')
     logout(request)
     return redirect('/login/')
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def delete_item(request, item_type, item_id):
+    logger.info(f'admin deleting item of type: {item_type}')
     if item_type == 'service':
         service = Service.objects.get(pk=item_id)
         service.delete()
@@ -87,7 +111,9 @@ def delete_item(request, item_type, item_id):
         return redirect('/main/?show_orders=true')
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def edit_item(request, item_type, item_id1, item_id2=None):
+    logger.info(f'admin editing item of type: {item_type}')
     if item_type == 'service':
         service = Service.objects.get(pk=item_id1)
 
@@ -119,7 +145,6 @@ def edit_item(request, item_type, item_id1, item_id2=None):
                       {'form': form, 'edit_title': 'Редактирование врача', 'url_show': 'show_doctors'})
 
     elif item_type == 'client':
-
         client = Client.objects.get(pk=item_id1)
         passport = Passport.objects.get(pk=item_id2)
         if request.method == 'POST':
@@ -173,7 +198,9 @@ def edit_item(request, item_type, item_id1, item_id2=None):
     return redirect('/main')  # or return an error response
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def main(request):
+    logger.info('admin page')
     show_doctors = request.GET.get('show_doctors')
     show_clients = request.GET.get('show_clients')
     show_services = request.GET.get('show_services')
@@ -224,10 +251,10 @@ def main(request):
     patients_list = []
     if show_patients:
         selected_doctor = request.GET.get('doctor')
-        print(selected_doctor)
         if selected_doctor:
             order_services_patients = set(
-                order_service.order.client for order_service in order_services if selected_doctor == order_service.doctor)
+                order_service.order.client for order_service in order_services if
+                selected_doctor == order_service.doctor)
             visits_patients = set(visit.client for visit in Visit.objects.filter(doctor=selected_doctor))
 
             patients_list = order_services_patients.union(visits_patients)
@@ -241,7 +268,9 @@ def main(request):
                    'show_result': show_result, 'show_patients': show_patients, 'patients_list': patients_list})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def add_item(request, item_type):
+    logger.info(f'admin adding item of type: {item_type}')
     if item_type == 'service':
         if request.method == 'POST':
             form = ServiceForm(request.POST)
@@ -294,6 +323,8 @@ def add_item(request, item_type):
         else:
             form = DoctorSignUpForm()
 
+        # specializations = Specialization.objects.all()
+
         return render(request, 'hospital/add_item.html',
                       {'form': form, 'add_title': 'Добавление врача', 'url_show': 'show_doctors'})
     elif item_type == 'client':
@@ -337,7 +368,9 @@ def info(request):
         return redirect('/doctor/info')
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def add_services_to_order(request):
+    logger.info('admin adds services to order')
     order = request.session.get('order')
     services = request.session.get('services', None)
 
@@ -362,3 +395,64 @@ def add_services_to_order(request):
     return render(request, 'hospital/add_item.html',
                   {'form': order_service_form, 'services': services, 'add_title': 'Добавление услуги',
                    'url_show': 'show_orders'})
+
+
+def statistics(request):
+    logger.info('statistics loading start')
+    visits = Visit.objects.all()
+    total_sales = sum(visit.service.price for visit in visits)
+
+    clients = Client.objects.all()
+    today = date.today()
+    total_clients = clients.count()
+    total_age = sum(today.year - client.birthday.year for client in clients)
+    average_age = 0
+    if total_clients > 0:
+        average_age = round(total_age / total_clients)
+
+    full_dates = [item.date() for item in daterange(datetime.now())]
+    dates_days = [int(dt.strftime("%d")) for dt in full_dates]
+
+    monthly_visits = Visit.objects.filter(visit_date__year=full_dates[0].strftime('%Y'),
+                                          visit_date__month=full_dates[0].strftime('%m'))
+    logger.info('statistics loading end')
+    plot_monthly_visits(monthly_visits, dates_days, full_dates)
+    return render(request, 'hospital/statistics.html', {'total_sales': total_sales, 'average_age': average_age})
+
+
+def daterange(cur_date):
+    delta = timedelta(days=1)
+    while True:
+        yield cur_date
+        if cur_date.strftime("%d") == '01':
+            break
+        cur_date -= delta
+
+
+def plot_monthly_visits(monthly_sales, dates_days, full_dates):
+    logger.info('executing monthly visits plotting')
+
+    sales_count = [0 for i in range(len(full_dates))]
+
+    for index, dt in enumerate(full_dates):
+        for sale in monthly_sales:
+
+            if dt == sale.visit_date.date():
+                sales_count[index] += 1
+    plt.switch_backend('agg')
+    plt.clf()
+    plt.cla()
+    plt.close()
+
+    plt.bar(dates_days, sales_count)
+    plt.yticks(sales_count)
+    plt.xticks(dates_days)
+
+    plt.xlabel('день')
+    plt.ylabel('посещения')
+    plt.title('Посещения в месяце')
+    plt.savefig('hospital/static/hospital/images/monthly_sales.png')
+
+
+def unknown_page(request, unknown):
+    return render(request, 'hospital/unknown_page.html', {'unknown_url': unknown})

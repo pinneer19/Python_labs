@@ -4,6 +4,7 @@
 {% block title %}{{ add_title }}{% endblock %}
 
 {% block content %}
+{% if request.user.is_authenticated and request.user.is_superuser %}
 <div class="justify-center items-center">
     {% if services %}
     <h2 class="text-2xl text-center my-4">Выбранные услуги:</h2>
@@ -59,4 +60,9 @@
         </form>
     </div>
 </div>
+{% else %}
+<div class="flex items-center justify-center">
+    <a href="/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница недоступна!</a>
+</div>
+{% endif %}
 {% endblock %}
