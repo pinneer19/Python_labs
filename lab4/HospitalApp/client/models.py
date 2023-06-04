@@ -32,7 +32,8 @@ class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default='')
     password = models.CharField('Пароль', max_length=25, default='')
     birthday = models.DateField('Дата рождения', validators=[
-        MaxValueValidator(limit_value=date.today().replace(year=date.today().year - 18))])
+        MaxValueValidator(limit_value=date.today().replace(year=date.today().year - 18),
+                          message='Регистрация доступна с 18 лет')])
     address = models.CharField('Адрес', max_length=255)
 
     phone_regex = RegexValidator(

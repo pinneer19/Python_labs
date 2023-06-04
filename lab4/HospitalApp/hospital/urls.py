@@ -9,7 +9,8 @@ urlpatterns = [
     # path('client/info/', include('client.urls'), name='info_client'),
     path('client/', include('client.urls'), name='signup'),
     path('doctor/', include('doctor.urls'), name='info_doctor'),
-    path('login/', views_auth.LoginView.as_view(template_name='hospital/login.html', authentication_form=LoginForm), name='login'),
+    path('login/', views_auth.LoginView.as_view(template_name='hospital/login.html', authentication_form=LoginForm),
+         name='login'),
     path('info/', views.info, name='info'),
     path('main/', views.main, name='superuser'),
     path('statistics/', views.statistics, name='statistics'),
@@ -20,4 +21,3 @@ urlpatterns = [
     path('', views.index),
     path('<path:unknown>', views.unknown_page, name='unknown_page'),
 ]
-

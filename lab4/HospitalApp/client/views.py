@@ -4,8 +4,10 @@ from datetime import date
 from time import strptime
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.contrib.auth.models import Group
+from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect
 from .forms import ClientSignUpForm, PassportForm
 from service.models import Service, ServiceCategory
@@ -23,23 +25,26 @@ def register_client(request):
     if request.method == 'POST':
 
         if form.is_valid() and passport_form.is_valid():
-            passport = passport_form.save()
-            client = form.save(commit=False)
-            client.passport = passport
+            try:
+                passport = passport_form.save()
+                client = form.save(commit=False)
+                client.passport = passport
 
-            user = User.objects.create_user(
-                username=passport.serial + passport.number,
-                password=form.cleaned_data['password']
-            )
+                user = User.objects.create_user(
+                    username=passport.serial + passport.number,
+                    password=form.cleaned_data['password']
+                )
 
-            group = Group.objects.get(name='client')
-            group.user_set.add(user)
+                group = Group.objects.get(name='client')
+                group.user_set.add(user)
 
-            client.user = user
-            client.save()
+                client.user = user
+                client.save()
 
-            # return redirect('/login/')
-            return redirect('/login/')
+                # return redirect('/login/')
+                return redirect('/login/')
+            except IntegrityError:
+                return HttpResponse('<h1>Пользователь с таким номером паспорта уже существует!</h1>')
         else:
             print(form.errors)
     data = {
@@ -49,6 +54,11 @@ def register_client(request):
     return render(request, 'client/signup_client.html', data)
 
 
+def is_not_superuser(user):
+    return not user.is_superuser
+
+
+@user_passes_test(is_not_superuser)
 @permission_required('client.view_client', raise_exception=True)
 def info(request):
     logger.info('client page')
@@ -59,6 +69,8 @@ def info(request):
     return render(request, 'client/info.html', context)
 
 
+@user_passes_test(is_not_superuser)
+@permission_required('client.view_client', raise_exception=True)
 def order(request):
     logger.info('client order')
     if request.method == 'POST':
@@ -79,6 +91,8 @@ def order(request):
     return redirect('/info/')
 
 
+@user_passes_test(is_not_superuser)
+@permission_required('client.view_client', raise_exception=True)
 def finish_order(request):
     logger.info('client submitting order')
     if request.user.is_authenticated:

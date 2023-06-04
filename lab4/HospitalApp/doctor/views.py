@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import Group
@@ -13,7 +13,7 @@ from visit.models import Visit
 from visit.forms import VisitForm
 
 User = get_user_model()
-logger=logging.getLogger('main')
+logger = logging.getLogger('main')
 
 
 def register_doctor(request):
@@ -44,6 +44,11 @@ def register_doctor(request):
     return render(request, 'doctor/signup_doctor.html', data)
 
 
+def is_not_superuser(user):
+    return not user.is_superuser
+
+
+@user_passes_test(is_not_superuser)
 @permission_required('doctor.view_doctor', raise_exception=True)
 def info(request):
     logger.info('doctor page')
@@ -68,6 +73,8 @@ def info(request):
                    'date': str(datetime.date.today()), 'total_cost': total_cost})
 
 
+@user_passes_test(is_not_superuser)
+@permission_required('doctor.view_doctor', raise_exception=True)
 def complete_service(request, item_id):
     logger.info('doctor complete ordered service')
     order_service = OrderService.objects.get(pk=item_id)
@@ -75,7 +82,6 @@ def complete_service(request, item_id):
     if request.method == 'POST':
 
         if form.is_valid():
-
             visit = Visit.objects.create(
                 doctor=order_service.doctor,
                 client=order_service.order.client,
@@ -83,10 +89,12 @@ def complete_service(request, item_id):
                 service=order_service.service,
                 diagnosis=form.cleaned_data['diagnosis']
             )
-            if not len(OrderService.objects.filter(order=order_service.order)):
-                Order.objects.get(order_service.order.id).delete()
-            order_service.delete()
-            return redirect('/doctor/info')
+
+            if len(OrderService.objects.filter(order=order_service.order)) == 1:
+                Order.objects.get(id=order_service.order.id).delete()
+            else:
+                order_service.delete()
+            return redirect('/doctor/info/')
 
         else:
             print(form.errors)

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
 from django.forms import model_to_dict
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from order.models import Order, OrderService
 from service.models import Service, ServiceCategory
@@ -45,26 +45,29 @@ def index(request):
 
     start_price = request.GET.get('start_price')
     end_price = request.GET.get('end_price')
+    selected_category = request.GET.get('category')
+
+    services = Service.objects.all()
+    categories = ServiceCategory.objects.all()
+    category_by_id = None
+
+    if selected_category:
+        services = services.filter(category_id=selected_category)
+        category_by_id = categories.get(id=selected_category)
 
     if start_price and end_price:
         start_price = float(start_price)
         end_price = float(end_price)
-        services = Service.objects.filter(price__gte=start_price, price__lte=end_price)
+
+        if start_price >= end_price:
+            return HttpResponse('<h1>Конечная цена не может быть меньше начальной!</h1>')
+        services = services.filter(price__gte=start_price, price__lte=end_price)
     elif start_price:
         start_price = float(start_price)
-        services = Service.objects.filter(price__gte=start_price)
+        services = services.filter(price__gte=start_price)
     elif end_price:
         end_price = float(end_price)
-        services = Service.objects.filter(price__lte=end_price)
-    else:
-        services = Service.objects.all()
-
-    categories = ServiceCategory.objects.all()
-    selected_category = request.GET.get('category')
-    category = None
-    if selected_category:
-        services = services.filter(category_id=selected_category)
-        category = categories.get(id=selected_category)
+        services = services.filter(price__lte=end_price)
 
     data = {
         'timezone': tz,
@@ -74,7 +77,7 @@ def index(request):
         'start_price': start_price,
         'end_price': end_price,
         'selected_category': selected_category,
-        'category_by_id': category
+        'category_by_id': category_by_id
     }
 
     return render(request, 'hospital/index.html', data)
@@ -94,19 +97,38 @@ def logout_user(request):
 def delete_item(request, item_type, item_id):
     logger.info(f'admin deleting item of type: {item_type}')
     if item_type == 'service':
-        service = Service.objects.get(pk=item_id)
+        try:
+            service = Service.objects.get(pk=item_id)
+        except Service.DoesNotExist:
+            logger.exception('Service.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such service</h2>')
+
         service.delete()
         return redirect('/main/?show_services=true')
     elif item_type == 'doctor':
-        doctor = Doctor.objects.get(pk=item_id)
+        try:
+            doctor = Doctor.objects.get(pk=item_id)
+        except Doctor.DoesNotExist:
+            logger.exception('Doctor.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such doctor</h2>')
+
         doctor.delete()
         return redirect('/main/?show_doctors=true')
     elif item_type == 'client':
-        client = Client.objects.get(pk=item_id)
+        try:
+            client = Client.objects.get(pk=item_id)
+        except Client.DoesNotExist:
+            logger.exception('Client.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such client</h2>')
+
         client.delete()
         return redirect('/main/?show_clients=true')
     elif item_type == 'order':
-        order = Order.objects.get(pk=item_id)
+        try:
+            order = Order.objects.get(pk=item_id)
+        except Order.DoesNotExist:
+            logger.exception('Order.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such order</h2>')
         order.delete()
         return redirect('/main/?show_orders=true')
 
@@ -115,8 +137,11 @@ def delete_item(request, item_type, item_id):
 def edit_item(request, item_type, item_id1, item_id2=None):
     logger.info(f'admin editing item of type: {item_type}')
     if item_type == 'service':
-        service = Service.objects.get(pk=item_id1)
-
+        try:
+            service = Service.objects.get(pk=item_id1)
+        except Service.DoesNotExist:
+            logger.exception('Service.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such service</h2>')
         if request.method == 'POST':
             form = ServiceForm(request.POST, instance=service)
             if form.is_valid():
@@ -129,7 +154,11 @@ def edit_item(request, item_type, item_id1, item_id2=None):
                       {'form': form, 'edit_title': 'Редактирование услуги', 'url_show': 'show_services'})
     elif item_type == 'doctor':
 
-        doctor = Doctor.objects.get(pk=item_id1)
+        try:
+            doctor = Doctor.objects.get(pk=item_id1)
+        except Doctor.DoesNotExist:
+            logger.exception('Doctor.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such doctor</h2>')
 
         if request.method == 'POST':
             form = DoctorSignUpForm(request.POST, instance=doctor)
@@ -138,15 +167,24 @@ def edit_item(request, item_type, item_id1, item_id2=None):
                 form.save()
                 return redirect('/main/?show_doctors=true')
         else:
-            print(doctor.password)
             form = DoctorSignUpForm(instance=doctor)
 
         return render(request, 'hospital/edit_item.html',
                       {'form': form, 'edit_title': 'Редактирование врача', 'url_show': 'show_doctors'})
 
     elif item_type == 'client':
-        client = Client.objects.get(pk=item_id1)
-        passport = Passport.objects.get(pk=item_id2)
+        try:
+            client = Client.objects.get(pk=item_id1)
+        except Client.DoesNotExist:
+            logger.exception('Client.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such client</h2>')
+
+        try:
+            passport = Passport.objects.get(pk=item_id2)
+        except Passport.DoesNotExist:
+            logger.exception('Passport.DoesNotExist')
+            return HttpResponseNotFound('<h2>No such passport</h2>')
+
         if request.method == 'POST':
             form = ClientSignUpForm(request.POST, instance=client)
             passport_form = PassportForm(request.POST, instance=passport)
@@ -360,12 +398,13 @@ def add_item(request, item_type):
 
 def info(request):
     user = request.user
+    print(dir(user))
     if user.is_superuser:
-        return redirect('/main')
+        return redirect('/main/')
     elif user.groups.filter(name='client').exists():
-        return redirect('/client/info')
+        return redirect('/client/info/')
     else:
-        return redirect('/doctor/info')
+        return redirect('/doctor/info/')
 
 
 @user_passes_test(lambda u: u.is_superuser)
