@@ -1,0 +1,54 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+
+{% block title %}Информация о доступных услугах{% endblock %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+
+<form method="post" action="{% url 'finish_order' %}" class="flex flex-col items-center">
+    {% csrf_token %}
+    {% for service in services %}
+    <div class="my-6 bg-gray-100 py-6 px-8 items-center justify-center rounded-xl w-1/4">
+        <h2 class="text-2xl font-bold text-center mb-4">{{ service.name }}</h2>
+        <div>
+            <label for="data-{{ service.id }}" class="font-bold mt-2">Выберите дату:</label>
+            <input type="date" name="data[]" value="{{ service.id }}" id="data-{{ service.id }}" min="{{ date }}" required
+                   class="my-4 border w-full border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            <!-- Render options for data selection -->
+            </input>
+        </div>
+        <div class="items-center w-full">
+            <label for="doctor-{{ service.id }}" class="font-bold">Выберите врача:</label>
+            <select name="doctor" id="doctor-{{ service.id }}"
+                    class="my-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+
+
+                {% for doctor in doctors %}
+                {% if doctor.department.name == service.category.department.name %}
+                <option value="{{ doctor.id }}">{{ doctor.first_name }} {{ doctor.last_name }}</option>
+                {% endif %}
+                {% endfor %}
+
+            </select>
+        </div>
+        <input type="hidden" name="service_id" value="{{ service.id }}">
+    </div>
+    {% endfor %}
+    <h3 class="text-2xl font-bold text-center mb-4">Итоговая стоимость: {{ cost }} BYN</h3>
+    <div class="mt-6 flex items-center">
+        <button type="submit" class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded">
+            Заказать
+        </button>
+        <a href="/client/info/" class="text-gray-500 hover:text-gray-800 py-2 px-4">Отмена</a>
+    </div>
+</form>
+
+
+{% else %}
+<div class="flex items-center justify-center">
+    <a href="/login/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница доступна только после
+        авторизации!</a>
+</div>
+{% endif %}
+{% endblock %}

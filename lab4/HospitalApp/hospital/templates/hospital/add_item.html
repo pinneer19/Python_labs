@@ -1,0 +1,68 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+
+{% block title %}{{ add_title }}{% endblock %}
+
+{% block content %}
+{% if request.user.is_authenticated and request.user.is_superuser %}
+<div class="justify-center items-center">
+    {% if services %}
+    <h2 class="text-2xl text-center my-4">Выбранные услуги:</h2>
+    <h2 class="text-2xl text-center font-bold my-4">{{ services|join:", " }}</h2>
+    {% endif %}
+    <div class="container mx-auto w-1/2 p-4 bg-gray-100 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold my-4">{{ add_title }}</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                {{ field }}<br/>
+            </div>
+            {% endfor %}
+            {% if passport_form %}
+            <div class="flex mb-3 ">
+                <div>
+                    {{ passport_form.serial }}
+                </div>
+                <div class="w-full ml-4 flex-grow">
+                    {{ passport_form.number }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if form.errors or form.non_field_errors or passport_form.errors or passport_form.non_field_errors %}
+            <div class="mb-3 p-6 bg-red-100 rounded-xl">
+                {% for field in form %}
+                {{ field.errors }}
+                {% endfor %}
+
+                {{ form.non_field_errors }}
+
+                {% for field in passport_form %}
+                {{ field.errors }}
+                {% endfor %}
+
+                {{ passport_form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="mt-6">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    {% if url_show == 'show_orders' %}
+                    Далее
+                    {% else %}
+                    Сохранить
+                    {% endif %}
+                </button>
+                <a href="/main/?{{ url_show }}=true" class="text-gray-500 hover:text-gray-800 ml-2">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="flex items-center justify-center">
+    <a href="/" class="text-blue-500 hover:text-blue-600 mt-20 font-bold text-4xl">Страница недоступна!</a>
+</div>
+{% endif %}
+{% endblock %}

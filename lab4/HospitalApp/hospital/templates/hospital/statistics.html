@@ -1,0 +1,32 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+
+{% block title %}Информация о доступных услугах{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'service/css/service.css' %}"/>
+
+<div class="flex justify-center items-center">
+    <div class="border-2 border-blue-600 bg-gray-100 p-6 rounded-lg w-1/2">
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-2xl font-bold">Общая сумма продаж</h2>
+                <h2 class="text-xl font-semibold">{{ total_sales }} byn</h2>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold">Средний возраст клиентов</h2>
+                <h2 class="text-xl font-semibold">{{ average_age }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex justify-center items-center">
+    <div class="col-md-6">
+        <img src="{% static 'hospital/images/monthly_sales.png' %}" class="img-thumbnail" alt="...">
+    </div>
+</div>
+
+
+{% endblock %}

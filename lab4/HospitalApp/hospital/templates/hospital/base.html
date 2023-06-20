@@ -1,0 +1,45 @@
+{% load filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title%}{% endblock %} | Hospital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<nav class="py-6 px-6 flex justify-between items-center border-b border-gray-200">
+    <a href="/" class="text-xl font-semibold">Медицинский центр</a>
+    <div class="space-x-6">
+
+        {% if request.user.is_authenticated %}
+        <div class="flex">
+            {% if request.user|has_group %}
+            <a href="/client/info" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Добро пожаловать!</a>
+            {% elif request.user|has_group:"doctor" %}
+                <a href="/doctor/info" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
+                {{ request.user.get_username }}</a>
+            {% else %}
+            <a href="/main" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
+                {{ request.user.get_username }}</a>
+            {% endif %}
+            <a href="{% url 'logout' %}"
+               class="px-6 py-3 text-lg ml-4 font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Выйти</a>
+        </div>
+
+        {% else %}
+        <a href="{% url 'signup' %}"
+           class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Регистрация</a>
+        <a href="{% url 'login' %}"
+           class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Войти</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="px-6 py-6">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

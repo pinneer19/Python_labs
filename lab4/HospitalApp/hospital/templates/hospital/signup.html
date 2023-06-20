@@ -1,0 +1,18 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="flex w-1/4 my-20 mx-auto p-6 bg-gray-100 rounded-xl justify-center border-b-2 border-gray-300">
+        <h2 class="text-xl rounded-xl mx-auto text-black">Выберите тип аккаунта</h2>
+</div>
+<style>
+    ul li {
+        display: inline-block;
+    }
+</style>
+<ul class="flex justify-center space-x-8 pt-16">
+    <li><a class="py-4 px-16 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'hospital:register_client' %}">Клиент</a></li>
+    <li><a class="py-4 px-20 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white" href="{% url 'hospital:register_doctor' %}">Врач</a></li>
+</ul>
+{% endblock %}

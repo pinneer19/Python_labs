@@ -1,0 +1,42 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}Информация о доступных услугах{% endblock %}
+
+{% block main_title %}
+
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'service/css/service.css' %}"/>
+    <div class="container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-4">Категории услуг</h2>
+        <ul class="flex flex-wrap gap-4">
+            {% for category in categories %}
+                <li><a href="#{{ category.id }}" class="text-blue-500 hover:text-blue-700">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="text-2xl font-bold my-4">Услуги</h2>
+        <form method="get">
+            <div class="flex items-center mb-4">
+                <select name="price_range" onchange="this.form.submit()" class="border-b-2 border-gray-300 rounded-md py-1 px-2 bg-white">
+                    <option value="all" {% if price_range == 'all' %}selected{% endif %}>Все</option>
+                    <option value="cheap" {% if price_range == 'cheap' %}selected{% endif %}>Сначала дешевые</option>
+                    <option value="expensive" {% if price_range == 'expensive' %}selected{% endif %}>Сначала дорогие</option>
+                    <option value="category" {% if price_range == 'category' %}selected{% endif %}>По категориям</option>
+                </select>
+            </div>
+        </form>
+
+        {% for category in categories %}
+            <h2 id="{{ category.id }}" class="category text-xl py-1 border-b-2 border-gray-400 font-normal my-4">{{ category.name }}</h2>
+            <ul>
+                {% for service in services %}
+                    {% if service.category == category %}
+                <li class="mb-2"><span class="font-light">{{ service.name }} - </span> <span class="font-extrabold">{{ service.price }} BYN</span></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+{% endblock %}
