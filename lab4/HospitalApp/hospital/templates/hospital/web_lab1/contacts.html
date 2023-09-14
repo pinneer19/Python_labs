@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Контактная информация">
+    <title>Контакты</title>
+</head>
+<body>
+
+<section>
+    <h2>Наши сотрудники</h2>
+    <table border="1" bgcolor="lightcyan">
+        <tr>
+            <th headers="fio" colspan="3">ФИО</th>
+        </tr>
+        <tr>
+            <th bgcolor="lightgray" headers="fio">Фамилия</th>
+            <th bgcolor="lightgray" headers="fio">Имя</th>
+            <th bgcolor="lightgray" headers="fio">Отчество</th>
+            <th bgcolor="lightgray">Должность</th>
+            <th bgcolor="lightgray">Телефон</th>
+            <th bgcolor="lightgray">Почта</th>
+            <th bgcolor="lightgray">Фото</th>
+        </tr>
+
+        <tr>
+            <td>Козлов</td>
+            <td>Александр</td>
+            <td>Иванович</td>
+            <td>Физиотерапевт</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail1@example.com</td>
+            <td><img src="{% static 'hospital/images/phisio.jpg' %}" width="100" height="100" alt="Фото сотрудника 1">
+            </td>
+        </tr>
+        <tr>
+            <td>Сидорова</td>
+            <td>Ольга</td>
+            <td>Викторовна</td>
+            <td>Рентгенолог</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail2@example.com</td>
+            <td><img src="{% static 'hospital/images/rentgenolog.jpg' %}" width="100" height="100"
+                     alt="Фото сотрудника 2">
+            </td>
+        </tr>
+        <tr>
+            <td>Козлов</td>
+            <td>Павел</td>
+            <td>Сергеевич</td>
+            <td>Педиатр</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail3@example.com</td>
+            <td><img src="{% static 'hospital/images/pediatr.png' %}" width="100" height="100"
+                     alt="Фото сотрудника 3">
+            </td>
+        </tr>
+        <tr>
+            <td>Иванова</td>
+            <td>Анна</td>
+            <td>Павловна</td>
+            <td>Гинеколог</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail4@example.com</td>
+            <td><img src="{% static 'hospital/images/ginekolog.jpg' %}" width="150" height="100"
+                     alt="Фото сотрудника 4">
+            </td>
+        </tr>
+        <tr>
+            <td>Смирнова</td>
+            <td>Елена</td>
+            <td>Александровна</td>
+            <td>Хирург</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail5@example.com</td>
+            <td><img src="{% static 'hospital/images/hirurg.jpg' %}" width="75" height="100"
+                     alt="Фото сотрудника 5">
+            </td>
+        </tr>
+        <tr>
+            <td>Петров</td>
+            <td>Иван</td>
+            <td>Иванович</td>
+            <td>Терапевт</td>
+            <td>+7 (123) 456-7890</td>
+            <td>mail6@example.com</td>
+            <td><img src="{% static 'hospital/images/terapevt.jpg' %}" width="150" height="100"
+                     alt="Фото сотрудника 6">
+            </td>
+        </tr>
+    </table>
+</section>
+
+<footer>
+    <p>&copy; 2023 СТР-Web Lab1. Все права защищены.</p>
+</footer>
+</body>
+</html>

@@ -81,6 +81,12 @@ def index(request):
     }
 
     return render(request, 'hospital/index.html', data)
+    # return render(request, 'hospital/web_lab1/home.html')
+    # return render(request, 'hospital/web_lab1/about.html')
+    # return render(request, 'hospital/web_lab1/news.html')
+    # return render(request, 'hospital/web_lab1/dictionary.html')
+    # return render(request, 'hospital/web_lab1/contacts.html')
+    # return render(request, 'hospital/web_lab1/about.html')
 
 
 def contact(request):
@@ -398,13 +404,44 @@ def add_item(request, item_type):
 
 def info(request):
     user = request.user
-    print(dir(user))
     if user.is_superuser:
         return redirect('/main/')
     elif user.groups.filter(name='client').exists():
         return redirect('/client/info/')
     else:
         return redirect('/doctor/info/')
+
+
+def home(request):
+    return render(request, 'hospital/web_lab1/home.html')
+
+
+def contacts(request):
+    return render(request, 'hospital/web_lab1/contacts.html')
+
+
+def about(request):
+    return render(request, 'hospital/web_lab1/about.html')
+
+
+def coupons(request):
+    return render(request, 'hospital/web_lab1/coupons.html')
+
+
+def dictionary(request):
+    return render(request, 'hospital/web_lab1/dictionary.html')
+
+
+def jobs(request):
+    return render(request, 'hospital/web_lab1/jobs.html')
+
+
+def news(request):
+    return render(request, 'hospital/web_lab1/news.html')
+
+
+def privacy(request):
+    return render(request, 'hospital/web_lab1/privacy.html')
 
 
 @user_passes_test(lambda u: u.is_superuser)

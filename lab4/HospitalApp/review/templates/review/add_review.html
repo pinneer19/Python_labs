@@ -1,0 +1,32 @@
+{% extends 'hospital/base.html' %}
+{% block title %}
+Добавить отзыв
+{% endblock %}
+
+{% block content %}
+
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="title">Заголовок:</label>
+    <input type="text" name="title" id="title" required>
+    <br><br>
+
+    <label for="stars">Рейтинг:</label>
+    <select name="stars" id="stars" required>
+        <option value="1">1 звезда</option>
+        <option value="2">2 звезды</option>
+        <option value="3">3 звезды</option>
+        <option value="4">4 звезды</option>
+        <option value="5">5 звезд</option>
+    </select>
+    <br><br>
+
+    <label for="review_text">Отзыв:</label>
+    <textarea name="review_text" id="review_text" rows="4" required></textarea>
+    <br><br>
+
+    <input type="submit" value="Отправить">
+</form>
+
+{% endblock %}

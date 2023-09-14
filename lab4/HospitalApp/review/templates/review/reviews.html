@@ -1,0 +1,35 @@
+{% extends 'hospital/base.html' %}
+{% load static %}
+{% block title %}
+Отзывы
+{% endblock %}
+{% block content %}
+
+
+<html>
+
+<body>
+
+<section>
+    {% for review in reviews %}
+    <details>
+        <summary><b>{{review.username}}: {{review.title}}</b>
+            <div>
+                {% with ''|center:review.stars as range %}
+                {% for i in range %}<img src="{% static 'review/images/star.png' %}">{% endfor %}
+                {% endwith %}
+            </div>
+        </summary>
+        <p>{{ review.review_text }}</p>
+        <small><em>{{review.date}}</em></small><br>
+    </details>
+    <br>
+    {%endfor%}
+</section>
+
+<a href="{% url 'add_review' %}">Оставть отзыв</a>
+</body>
+</html>
+
+
+{% endblock %}
