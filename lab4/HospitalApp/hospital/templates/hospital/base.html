@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title%}{% endblock %} | Hospital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!--<script src="https://cdn.tailwindcss.com"></script>-->
     <link rel="icon" type="image/x-icon" href="{% static 'hospital/images/site_icon.png' %}">
+
 </head>
 <body>
 <nav class="py-6 px-6 flex justify-between items-center border-b border-gray-200">
@@ -32,7 +33,7 @@
                 <a href="/doctor/info" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
                 {{ request.user.get_username }}</a>
             {% else %}
-            <a href="/main" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
+            <a href="/main/" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Привет,
                 {{ request.user.get_username }}</a>
             {% endif %}
             <a href="{% url 'logout' %}"

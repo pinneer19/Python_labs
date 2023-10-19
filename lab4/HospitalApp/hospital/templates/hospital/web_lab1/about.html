@@ -1,12 +1,201 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Информация о компании">
     <title>О компании</title>
+    <style>
+header h1 {
+    transform: rotate(20deg);
+    font-size: 2rem;
+    color: #FF5733;
+}
+
+/* Styles for the certificate image */
+section:nth-of-type(2) img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+/* Styles for the link to download the certificate */
+a[href="#certificate"] {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #FF5733;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Styles for other sections */
+section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+}
+
+/* Styles for the mission and values sections */
+section:nth-of-type(3), section:nth-of-type(4) {
+    background-color: #3498db;
+    color: #fff;
+}
+
+/* Styles for the video and iframe sections */
+.media {
+    background-color: #b736f7;
+    color: white;
+    font-size: 24px;
+    padding: 20px;
+    text-align: center;
+    display: flex; /* Use flexbox to arrange items in a row */
+    justify-content: space-around; /* Add space between items */
+    align-items: center; /* Center items vertically */
+}
+
+.media video, .media iframe, .media audio {
+    flex: 1; /* Make each item take up an equal amount of space */
+    margin: 10px; /* Add some margin around each item */
+    max-width: 100%; /* Ensure content doesn't overflow */
+    background: none transparent;
+}
+
+
+/* Styles for the history section */
+section#history ul {
+    padding-left: 100px;
+}
+
+/* Styles for the address section */
+address:first-of-type {
+    font-family: Verdana, sans-serif;
+    font-size: 16px;
+}
+
+.certificate {
+    width: 800px;
+    height: 520px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #333;
+    background-color: red;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    color: #333;
+    border: 40px solid;
+    background-image: url("https://img.freepik.com/free-vector/abstract-texture-background_91008-369.jpg");
+    border-image-source: url("https://img.freepik.com/free-vector/decorative-frame-background-blue-vintage-flower-design-vector_53876-157569.jpg");
+    border-image-slice: 27;
+    background-size: cover;
+    position: relative;
+}
+
+#certificate-section {
+    background: linear-gradient(90deg, #10109e, #00d4ff);
+}
+
+.certificate-header {
+    text-align: center;
+}
+
+.certificate-title {
+    font-size: 36px;
+    margin-top: 20px;
+    text-transform: uppercase;
+}
+
+.certificate-content {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.certificate-recipient {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.certificate-text {
+    font-size: 20px;
+    font-style: italic;
+}
+
+.certificate-signature {
+    margin-top: 100px;
+    position: relative;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.signature-line {
+    width: 60%;
+    border-top: 2px solid #333;
+    margin: 0 auto;
+}
+.signature {
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+}
+
+.signature img {
+    width: 200px;
+    height: auto;
+}
+
+/* Styles for the download link */
+a[id="certificate"] {
+    display: block;
+    margin-top: 20px;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 5px;
+    color: white;
+    text-decoration: none;
+}
+
+section > img[src*="logo"] {
+    transform:  rotate(20deg) skew(15deg, 15deg);
+}
+
+ul li::marker {
+    content: '\1F449'
+}
+
+li:first-child {
+    color: red;
+}
+
+li:last-child {
+    color: yellow;
+}
+
+li:nth-child(4) {
+    color: black;
+}
+
+a#certificate-link:hover {
+    background: white;
+    color: red;
+    border: 1px solid red;
+}
+
+/* Styles for the footer */
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+</style>
 </head>
+
 <body>
 <header>
     <h1>Информация о компании</h1>
@@ -15,7 +204,7 @@
     <h2>Наш сертификат</h2>
     <img src="{% static 'hospital/images/img.png' %}" title="Сертификат">
 </section>
-<a href="#certificate">Нажмите, чтобы загрузить наш сертификат</a>
+<a id="certificate-link" href="#certificate">Нажмите, чтобы загрузить наш сертификат</a>
 <section>
     <h2>О медицинском центре</h2>
     <p>Медицинский центр "Здоровье+" - это современное учреждение здравоохранения, которое предоставляет качественные
@@ -49,14 +238,18 @@
         </li>
     </ul>
 </section>
+<section class="media">
 
-<section>
-    <h2>Видео о компании</h2>
-
-    <video controls width="600" height="400">
+    <video class="media" controls width="600" height="400">
         <source src="{% static 'hospital/videos/video.mp4' %}" type="video/mp4">
         Ваш браузер не поддерживает видео.
     </video>
+
+    <iframe src="{% static 'hospital/audios/sample.mp3' %}" frameborder="0" height="120" allowtransparency="true"></iframe>
+
+    <audio controls>
+        <source src="{% static 'hospital/audios/sample.mp3' %}">
+    </audio>
 </section>
 
 <section>
@@ -64,7 +257,7 @@
     <img src="{% static 'hospital/images/logo.png' %}" width="50" height="50" alt="Логотип компании">
 </section>
 
-<section>
+<section id="history">
     <h2>История компании по годам</h2>
 
     <ul>
@@ -72,6 +265,7 @@
         <li><time datetime="2023-09-09">2023 год:</time> Описание важных событий в компании в этот год.</li>
     </ul>
 </section>
+
 <br><br>
 <section>
     <h2><em>Реквизиты компании</em></h2>
@@ -82,10 +276,27 @@
     </address>
 </section>
 
-<a id="certificate" href="{% static 'hospital/images/img.png' %}" download>Загрузить наш сертификат</a>
+<section id="certificate-section">
+    <a id="certificate" href="{% static 'hospital/images/img.png' %}" download>Загрузить наш сертификат</a>
+    <div class="certificate">
+            <div class="certificate-header">
+                <h1 class="certificate-title">Certificate of Achievement</h1>
+            </div>
+            <div class="certificate-content">
+                <p class="certificate-recipient">This is to certify that</p>
+                <p class="certificate-recipient">John Doe</p>
+                <p class="certificate-text">Has successfully completed the course on Web Development</p>
+            </div>
+            <div class="certificate-signature">
+                <div class="signature-line"></div>
+                <p style="margin-left: 85px; margin-top: 55px;">Signature</p>
+                <p style="margin-left: 85px;">Date: October 15, 2023</p>
+            </div>
+    </div>
+</section>
+
 <br><br>
 <footer>
     <p>&copy; 2023 СТР-Web Lab1. Все права защищены.</p>
 </footer>
 </body>
-</html>

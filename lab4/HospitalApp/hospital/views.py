@@ -81,12 +81,7 @@ def index(request):
     }
 
     return render(request, 'hospital/index.html', data)
-    # return render(request, 'hospital/web_lab1/home.html')
-    # return render(request, 'hospital/web_lab1/about.html')
-    # return render(request, 'hospital/web_lab1/news.html')
-    # return render(request, 'hospital/web_lab1/dictionary.html')
-    # return render(request, 'hospital/web_lab1/contacts.html')
-    # return render(request, 'hospital/web_lab1/about.html')
+
 
 
 def contact(request):
@@ -434,11 +429,6 @@ def dictionary(request):
 
 def jobs(request):
     return render(request, 'hospital/web_lab1/jobs.html')
-
-
-def news(request):
-    return render(request, 'hospital/web_lab1/news.html')
-
 
 def privacy(request):
     return render(request, 'hospital/web_lab1/privacy.html')

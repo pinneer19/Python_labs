@@ -72,7 +72,8 @@ INSTALLED_APPS = [
     'diagnosis',
     'visit',
     'order',
-    'review'
+    'review',
+    'news'
 ]
 
 MIDDLEWARE = [

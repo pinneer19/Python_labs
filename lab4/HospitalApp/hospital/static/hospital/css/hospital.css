@@ -1,0 +1,48 @@
+.grid {
+    display: grid;
+
+    justify-content: start;
+    grid-column-gap: 30px; /* Adjust the gap between grid items */
+    grid-row-gap: 5px; /* Adjust the gap between grid items */
+    margin-bottom: 20px;
+}
+
+.service-card {
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: lightblue;
+}
+
+.category {
+    grid-column: span 3; /* Make the category headings span all three columns */
+    font-size: 1.2rem;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid #ccc;
+    position: relative;
+}
+.category::before {
+  content: "";
+  position: absolute;
+  left: 0; /* Start from the left edge of the parent container */
+  bottom: -0.11rem;
+  width: 100%; /* Cover the entire width of the parent container */
+  height: 2px; /* Height of the border */
+  background-color: transparent; /* Initial color (transparent) */
+  transition: background-color 0.3s ease; /* Transition the background-color property with a 0.3s duration and ease timing function */
+}
+
+/* Change the background-color of the ::before element on hover */
+.category:hover::before {
+  background-color: red; /* Change this to the desired color on hover */
+}
+
+.form-input {
+    margin: 5px;
+}
+
+input:focus {
+    border-color: blue;
+    outline: none;
+    background: lightyellow;
+}

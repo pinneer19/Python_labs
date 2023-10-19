@@ -6,92 +6,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Контактная информация">
     <title>Контакты</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .employee {
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .employee:hover {
+            transform: translateY(-5px);
+        }
+
+        .employee img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 50%;
+        }
+
+        .employee > div {
+            margin: 10px 0;
+        }
+
+        h2.title {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+    </style>
 </head>
 <body>
 
-<section>
-    <h2>Наши сотрудники</h2>
-    <table border="1" bgcolor="lightcyan">
-        <tr>
-            <th headers="fio" colspan="3">ФИО</th>
-        </tr>
-        <tr>
-            <th bgcolor="lightgray" headers="fio">Фамилия</th>
-            <th bgcolor="lightgray" headers="fio">Имя</th>
-            <th bgcolor="lightgray" headers="fio">Отчество</th>
-            <th bgcolor="lightgray">Должность</th>
-            <th bgcolor="lightgray">Телефон</th>
-            <th bgcolor="lightgray">Почта</th>
-            <th bgcolor="lightgray">Фото</th>
-        </tr>
 
-        <tr>
-            <td>Козлов</td>
-            <td>Александр</td>
-            <td>Иванович</td>
-            <td>Физиотерапевт</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail1@example.com</td>
-            <td><img src="{% static 'hospital/images/phisio.jpg' %}" width="100" height="100" alt="Фото сотрудника 1">
-            </td>
-        </tr>
-        <tr>
-            <td>Сидорова</td>
-            <td>Ольга</td>
-            <td>Викторовна</td>
-            <td>Рентгенолог</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail2@example.com</td>
-            <td><img src="{% static 'hospital/images/rentgenolog.jpg' %}" width="100" height="100"
-                     alt="Фото сотрудника 2">
-            </td>
-        </tr>
-        <tr>
-            <td>Козлов</td>
-            <td>Павел</td>
-            <td>Сергеевич</td>
-            <td>Педиатр</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail3@example.com</td>
-            <td><img src="{% static 'hospital/images/pediatr.png' %}" width="100" height="100"
-                     alt="Фото сотрудника 3">
-            </td>
-        </tr>
-        <tr>
-            <td>Иванова</td>
-            <td>Анна</td>
-            <td>Павловна</td>
-            <td>Гинеколог</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail4@example.com</td>
-            <td><img src="{% static 'hospital/images/ginekolog.jpg' %}" width="150" height="100"
-                     alt="Фото сотрудника 4">
-            </td>
-        </tr>
-        <tr>
-            <td>Смирнова</td>
-            <td>Елена</td>
-            <td>Александровна</td>
-            <td>Хирург</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail5@example.com</td>
-            <td><img src="{% static 'hospital/images/hirurg.jpg' %}" width="75" height="100"
-                     alt="Фото сотрудника 5">
-            </td>
-        </tr>
-        <tr>
-            <td>Петров</td>
-            <td>Иван</td>
-            <td>Иванович</td>
-            <td>Терапевт</td>
-            <td>+7 (123) 456-7890</td>
-            <td>mail6@example.com</td>
-            <td><img src="{% static 'hospital/images/terapevt.jpg' %}" width="150" height="100"
-                     alt="Фото сотрудника 6">
-            </td>
-        </tr>
-    </table>
-</section>
+    <h2 class="title">Наши сотрудники</h2>
+    <div class="container">
+        <div class="employee">
+            <img src="{% static 'hospital/images/phisio.jpg' %}" width="100" height="100" alt="Фото сотрудника 1">
+            <div>Козлов Александр Иванович</div>
+            <div>Физиотерапевт</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail1@example.com</div>
+        </div>
+
+        <div class="employee">
+            <img src="{% static 'hospital/images/rentgenolog.jpg' %}" width="100" height="100" alt="Фото сотрудника 2">
+            <div>Сидорова Ольга Викторовна</div>
+            <div>Рентгенолог</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail2@example.com</div>
+        </div>
+        <!--    <table>-->
+        <!--        <tr>-->
+        <!--            <th style="color: blue" headers="fio" colspan="3">ФИО</th>-->
+        <!--            <th colspan="4"></th>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <th bgcolor="lightgray" headers="fio">Фамилия</th>-->
+        <!--            <th bgcolor="lightgray" headers="fio">Имя</th>-->
+        <!--            <th bgcolor="lightgray" headers="fio">Отчество</th>-->
+        <!--            <th bgcolor="lightgray">Должность</th>-->
+        <!--            <th bgcolor="lightgray">Телефон</th>-->
+        <!--            <th bgcolor="lightgray">Почта</th>-->
+        <!--            <th bgcolor="lightgray">Фото</th>-->
+        <!--        </tr>-->
+
+        <!--      -->
+
+        <div class="employee">
+            <img src="{% static 'hospital/images/pediatr.png' %}" width="100" height="100" alt="Фото сотрудника 3">
+            <div>Козлов Павел Сергеевич</div>
+            <div>Педиатр</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail3@example.com</div>
+        </div>
+        <div class="employee">
+            <img src="{% static 'hospital/images/ginekolog.jpg' %}" width="150" height="100" alt="Фото сотрудника 4">
+            <div>Иванова Анна Павловна</div>
+            <div>Гинеколог</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail4@example.com</div>
+        </div>
+        <div class="employee">
+            <img src="{% static 'hospital/images/hirurg.jpg' %}" width="75" height="100" alt="Фото сотрудника 5">
+            <div>Смирнова Елена Александровна</div>
+            <div>Хирург</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail5@example.com</div>
+        </div>
+        <div class="employee">
+            <img src="{% static 'hospital/images/terapevt.jpg' %}" width="150" height="100" alt="Фото сотрудника 6">
+            <div>Петров Иван Иванович</div>
+            <div>Терапевт</div>
+            <div>+7 (123) 456-7890</div>
+            <div>mail6@example.com</div>
+        </div>
+    </div>
 
 <footer>
     <p>&copy; 2023 СТР-Web Lab1. Все права защищены.</p>

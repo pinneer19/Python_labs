@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Список статей нашего сайта">
+    <link rel="icon" href="favicon.ico">
+    <title>Новости</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0; /* Background color for the entire page */
+        }
+
+        header {
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .article-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            min-height: calc(100vh - 100px); /* Adjust for header and footer height */
+            margin-top: 20px;
+        }
+
+        .article {
+            width: 80%; /* Adjust the width as needed */
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a box shadow for a card-like effect */
+        }
+
+        .article img {
+            max-width: 100%;
+            max-height: 350px;
+            height: auto;
+            margin-top: 20px; /* Increase the margin from the image */
+        }
+
+        .article h2 {
+            font-size: 24px; /* Increase the font size for the title */
+            margin: 0;
+        }
+
+        .article p {
+            font-size: 16px; /* Increase the font size for the content */
+            margin-top: 20px; /* Add some spacing between elements */
+        }
+
+        .read-more-button {
+            display: block;
+            text-align: center;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin-top: 20px; /* Adjust the margin as needed */
+            border-radius: 5px; /* Add rounded corners to the button */
+        }
+
+        .footer {
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Новости нашего сайта</h1>
+</header>
+<div class="article-container">
+    <div class="article">
+        <h2>{{ news.title }}</h2>
+        <img src="{% static 'news/images/' %}{{ news.filename }}" alt="Изображение статьи">
+        <p>{{ news.content }}</p>
+        <a href="{{ news.link }}" class="read-more-button">Читать оригинал</a>
+    </div>
+</div>
+
+
+<br><br>
+<div class="footer">
+    <p>&copy; 2023 СТР-Web Lab1. Все права защищены.</p>
+</div>
+</body>
+</html>
