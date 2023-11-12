@@ -42,20 +42,6 @@
         details em {
           font-style: italic;
         }
-
-        /* Add a Read More Button */
-        details::after {
-          content: 'Читать далее';
-          display: block;
-          text-align: center;
-          color: #0074d9;
-          cursor: pointer;
-        }
-
-        details[open]::after {
-          content: 'Скрыть';
-        }
-
         /* Style Blockquote */
         details q {
           border-left: 2px solid #0074d9;
@@ -114,7 +100,30 @@
         span[itemprop="telephone"] {
           margin-right: 10px;
         }
+
+        section > h2 {
+          cursor: pointer;
+        }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // Add click event listener to all details divs
+        let header = document.querySelector('section > h2');
+        header.addEventListener("click", (e) => {
+          var details = document.querySelectorAll('details');
+
+          details.forEach(function(det) {
+              if(det.hasAttribute("open")) {
+                det.open = false;
+              }
+              else {
+                det.open = true;
+              }
+          });
+        });
+        
+    });
+  </script>
 </head>
 <body>
 <header>
@@ -125,13 +134,14 @@
     <h2>Часто задаваемые вопросы (FAQ)</h2>
     <ul>
         <li>
-            <div>
+            <div details>
                 <span>Добавлено: <time datetime="11.09.2023">11.09.2023</time></span>
                 <details>
                     <summary>Вопрос: Какие специализации врачей доступны в вашем медицинском центре?</summary>
 
                     <em>Ответ: В нашем медицинском центре доступны врачи-специалисты в таких областях, как кардиология,
                         неврология, а также общая медицина и многие другие специализации.</em>
+
                 </details>
             </div>
         </li>

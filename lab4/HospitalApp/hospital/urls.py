@@ -27,6 +27,11 @@ urlpatterns = [
     path('add/order/services/', views.add_services_to_order, name='add_services'),
     path('delete/<str:item_type>/<int:item_id>/', views.delete_item, name='delete_item'),
     path('edit/<str:item_type>/<int:item_id1>/<int:item_id2>/', views.edit_item, name='edit_item'),
+    path('js/', views.js_tasks, name='js_tasks'),
+    path('js/task9/', views.js_task9, name='task9'),
+    path('js/task11/', views.js_task11, name='task11'),
+    path('js/task3/', views.js_task3, name='task3'),
+    path('js/task5/', views.js_task5, name='task5'),
     path('', views.index),
     path('<path:unknown>', views.unknown_page, name='unknown_page'),
 ]

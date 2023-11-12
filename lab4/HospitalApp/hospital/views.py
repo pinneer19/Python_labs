@@ -83,7 +83,6 @@ def index(request):
     return render(request, 'hospital/index.html', data)
 
 
-
 def contact(request):
     return render(request, 'hospital/contact.html')
 
@@ -430,6 +429,7 @@ def dictionary(request):
 def jobs(request):
     return render(request, 'hospital/web_lab1/jobs.html')
 
+
 def privacy(request):
     return render(request, 'hospital/web_lab1/privacy.html')
 
@@ -522,3 +522,21 @@ def plot_monthly_visits(monthly_sales, dates_days, full_dates):
 
 def unknown_page(request, unknown):
     return render(request, 'hospital/unknown_page.html', {'unknown_url': unknown})
+
+
+def js_tasks(request):
+    return render(request, 'hospital/web_lab3/js_tasks.html')
+
+
+def js_task9(request):
+    return render(request, 'hospital/web_lab3/js_task9.html')
+
+
+def js_task11(request):
+    return render(request, 'hospital/web_lab3/js_task11.html')
+
+def js_task3(request):
+    return render(request, 'hospital/web_lab3/js_task3.html')
+
+def js_task5(request):
+    return render(request, 'hospital/web_lab3/js_task5.html')

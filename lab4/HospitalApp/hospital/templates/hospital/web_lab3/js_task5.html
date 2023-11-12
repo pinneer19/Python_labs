@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Изменение стиля страницы</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style id="custom-style"></style>
+  <style>
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #sampleText {
+      font-size: 24px;
+      color: black;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    #sampleImage {
+      width: 200px;
+    }
+
+    .form-container {
+      flex-direction: column;
+      display: flex;
+      margin-left: 50px;
+      height: 100vh;
+      justify-content: center;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-container">
+          <h1>Изменение стиля страницы</h1>
+
+          <form>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="styleCheckbox">
+              <label class="form-check-label" for="styleCheckbox">
+                Включить настройку стиля страницы
+              </label>
+            </div>
+
+            <div id="styleOptions" style="display: none;">
+              <div class="mb-3">
+                <label for="fontSize" class="form-label">Размер шрифта:</label>
+                <input type="range" class="form-range" id="fontSize" min="12" max="48" step="2">
+              </div>
+
+              <div class="mb-3">
+                <label for="textColor" class="form-label">Цвет текста:</label>
+                <input type="color" class="form-control form-control-color" id="textColor">
+              </div>
+
+              <div class="mb-3">
+                <label for="backgroundColor" class="form-label">Цвет фона:</label>
+                <input type="color" class="form-control form-control-color" id="backgroundColor">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div id="container">
+          <p id="sampleText">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada luctus arcu, sit amet lobortis dui euismod vel. Suspendisse augue tellus, euismod eu dictum congue, bibendum ut mauris. Maecenas vitae pretium sem. Ut in ligula interdum tellus rutrum porta. Nulla fermentum lorem in pellentesque ultrices. Proin ut vestibulum justo. Pellentesque lacinia diam in magna volutpat, et cursus lorem eleifend.</p>
+          <img id="sampleImage" src="{% static "hospital/images/img_1.png" %}" alt="Пример изображения">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var styleCheckbox = document.getElementById('styleCheckbox');
+      var styleOptions = document.getElementById('styleOptions');
+      var container = document.getElementById('container');
+      var sampleText = document.getElementById('sampleText');
+      var sampleImage = document.getElementById('sampleImage');
+
+      styleCheckbox.addEventListener('change', function() {
+        if (styleCheckbox.checked) {
+          styleOptions.style.display = 'block';
+          createStyleElements();
+        } else {
+          styleOptions.style.display = 'none';
+          removeStyleElements();
+        }
+      });
+
+      function createStyleElements() {
+        var fontSizeInput = document.getElementById('fontSize');
+        var textColorInput = document.getElementById('textColor');
+        var backgroundColorInput = document.getElementById('backgroundColor');
+
+        fontSizeInput.addEventListener('input', function() {
+          var fontSize = fontSizeInput.value + 'px';
+          sampleText.style.fontSize = fontSize;
+        });
+
+        textColorInput.addEventListener('input', function() {
+          var textColor = textColorInput.value;
+          sampleText.style.color = textColor;
+        });
+
+        backgroundColorInput.addEventListener('input', function() {
+          var backgroundColor = backgroundColorInput.value;
+          container.style.backgroundColor = backgroundColor;
+        });
+      }
+
+      function removeStyleElements() {
+        sampleText.removeAttribute('style');
+        container.removeAttribute('style');
+      }
+    });
+
+</script>
+</body>
+</html>

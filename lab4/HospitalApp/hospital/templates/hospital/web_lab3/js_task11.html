@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array task</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        form {
+            margin: 20px;
+        }
+        
+        label, select, input {
+            margin: 5px;
+        }
+        
+        button {
+            margin: 10px;
+        }
+        
+        #result {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 20px;
+            display: none;
+        }
+        
+        /* Improved design with Bootstrap classes */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .btn {
+            padding: 10px 20px;
+        }
+        #result {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Array Task</h1>
+        <form id="cubeForm">
+            <div class="form-group">
+                <label for="cubeColor">Cube color:</label>
+                <select class="form-control" id="cubeColor">
+                    <option value="red">Red</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cubeSize">Cube size (cm):</label>
+                <input type="number" class="form-control" id="cubeSize">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="addCube()">Add Cube</button>
+            <button type="button" class="btn btn-success" onclick="calculateTotals()">Calculate</button>
+        </form>
+        <div id="result">
+            <h2 class="text-center">Result</h2>
+            <p>Red cubes: <span id="redCount">0</span></p>
+            <p>Yellow cubes: <span id="yellowCount">0</span></p>
+            <p>Blue cubes: <span id="blueCount">0</span></p>
+            <p>Green cubes: <span id="greenCount">0</span></p>
+            <p>Total volume: <span id="totalVolume">0 cm³</span></p>
+        </div>
+    </div>
+    <script>    
+
+        let cubes = {};
+        
+        const addColumnBtn = document.getElementById('addColumn');
+        
+        function addCube() {
+            const cubeColor = document.getElementById('cubeColor').value;
+            const cubeSize = Number.parseFloat(document.getElementById('cubeSize').value, 10);
+            if(!cubeSize) {
+                alert('Please enter valid cube size');
+                return;
+            }
+        
+            if (cubeColor && cubeSize > 0) {
+                if (cubes[cubeColor]) {
+                    cubes[cubeColor].count += 1;
+                    cubes[cubeColor].volume += cubeSize * cubeSize * cubeSize;
+                } else {
+                    cubes[cubeColor] = {
+                        count: 1,
+                        volume: cubeSize * cubeSize * cubeSize,
+                    };
+                }
+            }
+        }
+
+        function calculateTotals() {
+            const result = document.getElementById('result');
+            const redCount = document.getElementById('redCount');
+            const yellowCount = document.getElementById('yellowCount');
+            const blueCount = document.getElementById('blueCount');
+            const greenCount = document.getElementById('greenCount');
+            const totalVolume = document.getElementById('totalVolume');
+        
+            redCount.textContent = cubes['red'] ? cubes['red'].count : 0;
+            yellowCount.textContent = cubes['yellow'] ? cubes['yellow'].count : 0;
+            blueCount.textContent = cubes['blue'] ? cubes['blue'].count : 0;
+            greenCount.textContent = cubes['green'] ? cubes['green'].count : 0;
+        
+            let sumVolume = 0;
+            for (const color in cubes) {
+                sumVolume += cubes[color].volume;
+            }
+            totalVolume.textContent = sumVolume + " cm³";
+        
+            result.style.display = 'block';
+        }
+        
+    </script>
+</body>
+</html>

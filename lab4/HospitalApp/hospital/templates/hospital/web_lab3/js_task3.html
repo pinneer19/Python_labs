@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+      }
+      body {
+        background: #72a650;
+        min-height: 1500px;
+      }
+      section:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to top, #72a650, transparent);
+        z-index: 1000;
+
+      }
+    
+      section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      section img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+      }
+
+
+      #text {
+        position: relative;
+        color: #fff;
+        font-size: 7em;
+        z-index: 1;
+      }
+
+      #land {
+        z-index: -1;
+      }
+      
+      .output {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #fff; /* Content background color */
+      }
+    </style>
+</head>
+<body>
+    <section>
+      <img id="sky" src="{% static "hospital/images/sky.png" %}"></img>
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/clouds_1.png" id="clouds_1" />
+      <img src="https://aryan-tayal.github.io/Mountains-Parallax/clouds_2.png" id="c2" />
+      <h2 id="text">Welcome to Parallax</h2>
+      <img id="land" src="{% static "hospital/images/landscape.png" %}"></img>
+      
+    </section>
+    
+    <div class="container">
+      <h1 class="mt-4" style="font-weight: bold; color: white; text-align: center;">Medical Center Demo</h1>
+
+      <div class="row mt-4">
+          <div class="col-md-5" style="background: white; padding: 15px; border-radius: 10px; margin-right: 50px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);">
+              <h2 style="color: blue; text-align: center;">Functional Style</h2>
+              <form id="functionalForm">
+                  <div class="form-group">
+                      <label for="functionalName">Name:</label>
+                      <input type="text" class="form-control" id="functionalName">
+                  </div>
+                  <div class="form-group">
+                      <label for="functionalDescription">Description:</label>
+                      <input type="text" class="form-control" id="functionalDescription">
+                  </div>
+                  <button type="button" class="btn btn-primary" onclick="updateFunctionalInstance()">Update</button>
+              </form>
+              <div id="functionalOutput" class="output mt-3"></div>
+          </div>
+
+          <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);" class="col-md-5">
+              <h2 style="color: blue; text-align: center;">Class + Extends Version</h2>
+              <form id="classForm">
+                  <div class="form-group">
+                      <label for="className">Name:</label>
+                      <input type="text" class="form-control" id="className">
+                  </div>
+                  <div class="form-group">
+                      <label for="classDescription">Description:</label>
+                      <input type="text" class="form-control" id="classDescription">
+                  </div>
+                  <button type="button" class="btn btn-primary" onclick="updateClassInstance()">Update</button>
+              </form>
+              <div id="classOutput" class="output mt-3"></div>
+          </div>
+      </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      let sky = document.getElementById("sky");
+      let text = document.getElementById("text");
+      let land = document.getElementById("land");
+      let clouds_1 = document.getElementById("clouds_1");
+      let clouds_2 = document.getElementById("c2");
+      
+
+      window.addEventListener('scroll', function() {
+        
+        var value = window.scrollY;
+        sky.style.top = value * 0.5 + 'px';
+        clouds_1.style.top = value * 0.5 + 'px';
+        clouds_1.style.left = value + 'px';
+        clouds_2.style.top = -value * 0.5 + 'px';
+        clouds_2.style.left = -value * 0.5 + 'px';
+        land.style.top = value * 0.15 + 'px';
+        text.style.top = value * 1 + 'px';
+        text.style.opacity = 1 - value / (document.documentElement.scrollHeight - window.innerHeight);
+      })
+  
+      function logDecorator(func) {
+        return function(...args) {
+          return `Decorated toString ` + func.apply(this, args);
+        };
+      }
+
+      // Functional style
+      function medicalCenter(name, description) {
+        let _name = name;
+        let _description = description;
+
+        this.getName = () => _name;
+
+        this.setName = (name) => _name = name;
+
+        this.getDescription = () => _description;
+
+        this.setDescription = (description) => _description = description;
+
+        this.toString = () => `Name: ${_name} Description: ${_description}`;
+        medicalCenter.prototype.toString = this.toString;
+        this.decorated = () => logDecorator(this.toString)();
+      }
+
+      function hospital(name, description, department) {
+        medicalCenter.call(this, name, description);
+        
+        let _department = department;
+
+        this.getDepartment = () => _department;
+
+        this.setDepartment = (department) => _department = department;
+
+        this.toString = function() {
+          return `${medicalCenter.prototype.toString.call(this)} Department: ${_department}`;        }
+      }
+
+
+      // Class + extends version      
+      class MedicalCenter {
+        constructor(name, description) {
+          this.name = name;
+          this.description = description;
+        }
+
+        get Name() {
+          return this.name;
+        }
+
+        set Name(name) {
+          this.name = name;
+        }
+
+        get Description() {
+          return this.description;
+        }
+
+        set Description(description) {
+          this.description = description;
+        }
+
+        toString() {
+          return `Name: ${this.name} Description: ${this.description}`;
+        }
+
+        decorated() {
+          return logDecorator(this.toString.bind(this))();
+        }
+      }
+
+      
+      class Hospital extends MedicalCenter {
+        constructor(name, description, department) {
+          super(name, description);
+          this.department = department;
+        }
+
+        get Department() {
+          return this.department;
+        }
+
+        set Department(department) {
+          this.department = department;
+        }
+
+        toString() {
+          return super.toString() + ` Department: ${this.department}`;
+        }
+      }
+
+          // Functional style
+          const functionalCenter = new medicalCenter("Functional Center", "Functional Description");
+          const functionalHospital = new hospital("Functional Hospital", "Functional Hospital Description", "Emergency");
+  
+          // Class + extends version
+          const classCenter = new MedicalCenter("Class Center", "Class Description");
+          const classHospital = new Hospital("Class Hospital", "Class Hospital Description", "Cardiology");
+  
+          // Display output
+          updateFunctionalOutput();
+          updateClassOutput();
+  
+          function updateFunctionalOutput() {
+              const outputElement = document.getElementById('functionalOutput');
+              outputElement.innerHTML = `<h3>Functional Style</h3>${functionalCenter.decorated()}<br>${functionalHospital.toString()}`;
+          }
+  
+          function updateClassOutput() {
+              const outputElement = document.getElementById('classOutput');
+              outputElement.innerHTML = `<h3>Class + Extends Version</h3>${classCenter.decorated()}<br>${classHospital.toString()}`;
+          }
+  
+          function updateFunctionalInstance() {
+              const newName = document.getElementById('functionalName').value;
+              const newDescription = document.getElementById('functionalDescription').value;
+  
+              functionalCenter.setName(newName);
+              functionalCenter.setDescription(newDescription);
+  
+              functionalHospital.setName(newName);
+              functionalHospital.setDescription(newDescription);
+  
+              updateFunctionalOutput();
+          }
+  
+          function updateClassInstance() {
+              const newName = document.getElementById('className').value;
+              const newDescription = document.getElementById('classDescription').value;
+  
+              classCenter.Name = newName;
+              classCenter.Description = newDescription;
+  
+              classHospital.Name = newName;
+              classHospital.Description = newDescription;
+  
+              updateClassOutput();
+          }
+    </script>
+</body>
+</html>

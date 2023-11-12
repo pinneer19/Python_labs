@@ -7,7 +7,7 @@
 
     <h1 class="mb-4 mt text-3xl">Регистрация клиента</h1>
 
-    <form method="post" action=".">
+    <form method="post" action="." id="registrationForm">
         {% csrf_token %}
 
         {% for field in form %}
@@ -44,7 +44,31 @@
         {% endif %}
         <button class="py-2 px-8 text-lg bg-teal-500 hover:bg-teal-700 rounded-xl text-white">Завершить</button>
     </form>
+    <script>
+        function submitForm() {
+            // Get the entered date of birth
+            const birthdateInput = document.getElementById('birthdate');
+            const birthdate = new Date(birthdateInput.value);
 
+            // Calculate age
+            const today = new Date();
+            const age = today.getFullYear() - birthdate.getFullYear();
+
+            // Get the day of the week for the entered date
+            const dayOfWeek = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(birthdate);
+
+            // Display an alert for adults
+            if (age >= 18) {
+                alert(`Ваш возраст: ${age} лет. День недели вашего рождения: ${dayOfWeek}`);
+            } else {
+                // Alert for minors - you may want to customize this part
+                alert(`Вы несовершеннолетний. Для использования сайта требуется разрешение родителей.`);
+            }
+
+            // Submit the form
+            document.getElementById('registrationForm').submit();
+        }
+    </script>
 </div>
 
 {% endblock %}

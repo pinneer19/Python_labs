@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap List Example</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            gap: 50px; /* Adjust the gap between cards */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 30rem;
+            min-height: 50vh;
+            perspective: 1000px;
+            border-radius: 30px;
+            box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2)
+        }
+
+        .card_image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.75s ease-out;
+        }
+        
+        div, div:before, div:after {
+            transform-style: preserve-3d;
+        }
+
+        .countdown-container {
+          text-align: center;
+          margin-top: 50px;          
+        }
+
+        .countdown {
+          font-size: 48px;
+          font-weight: bold;
+        }
+
+        .card_image img {
+            width: 150px;
+            height: 150px;
+            border-radius: 20%;
+        }
+
+        .info {
+            transition: all 0.75s ease-out;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .info a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .info a:hover {
+            background-color: #0277c7;
+        }
+
+        .container-2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 100px;
+            gap: 10px;
+        }
+
+        .birth-date {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .birth-date h1 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .birth-date label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .birth-date input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #aab5bf;
+            border-radius: 5px;
+        }
+
+        .birth-date button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .birth-date button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-2">
+        <div class="countdown-container">
+            <h1>Countdown</h1> 
+            <div id="countdown" class="countdown"></div>
+        </div>
+
+        <div class="birth-date">
+            <h1>Check age</h1>
+            <label for="birthdate">Enter birthday</label>
+            <input type="date" id="birthdate"/>
+            <button onclick="checkAge()">Check</button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <div class="card_image">
+                <img src="{% static 'hospital/images/logo-javascript.svg' %}" alt="Logo">
+            </div>
+            <div class="info">
+                <h1 class="title">Parallax</h1>
+                <a href="{% url 'task3' %}">Task 3</a>
+            </div>
+        </div>
+    
+
+    
+        <div class="card">
+            <div class="card_image">
+                <img src="{% static 'hospital/images/logo-javascript.svg' %}" alt="Logo">
+            </div>
+            <div class="info">
+                <h1 class="title">Matrix</h1>
+                <a href="{% url 'task9' %}">Task9</a>
+            </div>
+        </div>
+    
+
+    
+        <div class="card">
+            <div class="card_image">
+                <img src="{% static 'hospital/images/logo-javascript.svg' %}" alt="Logo">
+            </div>
+            <div class="info">
+                <h1 class="title">Associative array</h1>
+                <a href="{% url 'task11' %}">Task11</a>
+            </div>
+        </div>
+    
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll(".card");
+
+        cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const [width, height] = [rect.width, rect.height];
+            const title = card.querySelector(".info")
+            const image = card.querySelector(".card_image")
+            console.log(title);
+            card.addEventListener('mousemove', event => {
+                const [x, y] = [event.offsetX, event.offsetY];
+                
+                
+                console.log(width, height);
+                const middleX = width / 2;
+                const middleY = height / 2;
+                const offsetX = ((x - middleX) / middleX) * 25;
+                const offsetY = ((y - middleX) / middleY) * 25;
+ 
+                card.style.transform = `rotateY(${offsetX}deg) rotateX(${offsetY}deg)`;
+            });
+
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = "none";
+                title.style.transform = "translateZ(70px)";
+                image.style.transform = "translateZ(70px) rotateZ(-90deg)";
+                
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transition = "all 0.5s ease";
+                card.style.transform = `rotateY(0deg) rotateX(0deg)`
+
+                title.style.transform = "translateZ(0px)";
+                image.style.transform = "translateZ(0px) rotateZ(0deg)";
+                card.style.transform
+            });
+        });
+         // Проверяем, есть ли сохраненное значение в локальном хранилище
+    var savedTime = localStorage.getItem('countdownTime');
+
+
+    // Если сохраненное значение имеется и оно не истекло, продолжаем отсчет
+    if (savedTime && Date.now() < savedTime) {
+        startCountdown(savedTime);
+    } else {
+        // В противном случае начинаем отсчет с 1 часа
+        var countdownTime = Date.now() + 3600000; // 1 час в миллисекундах
+        startCountdown(countdownTime);
+        localStorage.setItem('countdownTime', countdownTime);
+    }
+
+    function startCountdown(time) {
+        var countdownElement = document.getElementById('countdown');
+
+        var countdownInterval = setInterval(function() {
+        var currentTime = Date.now();
+        var remainingTime = time - currentTime;
+
+        if (remainingTime > 0) {
+            // Преобразуем оставшееся время в формат "чч:мм:сс"
+            var hours = Math.floor(remainingTime / 3600000);
+            var minutes = Math.floor((remainingTime % 3600000) / 60000);
+            var seconds = Math.floor((remainingTime % 60000) / 1000);
+
+            // Отображаем обратный отсчет
+            countdownElement.textContent = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
+        } else {
+            // Отсчет закончился
+            countdownElement.textContent = 'Time is gone';
+            clearInterval(countdownInterval);
+        }
+        }, 1000);
+    }
+
+    function formatTime(time) {
+        return time < 10 ? '0' + time : time;
+    }
+
+
+    function checkAge() {
+        var birthdateInput = document.getElementById("birthdate");
+        var birthdate = new Date(birthdateInput.value);
+        var now = new Date();
+
+        var age = now.getFullYear() - birthdate.getFullYear();
+        var isAdult = age >= 18;
+
+        var dayOfWeek = birthdate.toLocaleDateString("en-US", {
+          weekday: "long"
+        });
+
+        if (isAdult) {
+          alert("You're " + age + " years old adult! Birthday week day: " + dayOfWeek);
+        } else {
+          alert(
+            "You're a kid! To use the site you need parental permission!"
+          );
+        }
+      }
+    </script>
+</body>
+</html>

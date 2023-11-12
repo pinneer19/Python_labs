@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квадратная таблица</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+        .selected {
+            background-color: #00FF00;
+        }
+        .highlighted {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Генератор таблицы</h1>
+
+        <div class="form-group row">
+            <label for="sizeInput" class="col-sm-4 col-form-label">Введите размер таблицы:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" id="sizeInput" min="1" value="3">
+            </div>
+            <div class="col-sm-6">
+                <button id="generateTable" class="btn btn-primary">Сгенерировать таблицу</button>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <button id="transposeTable" class="btn btn-primary">Транспонировать таблицу</button>
+            </div>
+            <label for="maxSelection" class="col-sm-4 col-form-label">Максимальное количество выделенных ячеек в ряду/столбце:</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" id="maxSelection" min="1" value="1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button id="addRow" class="btn btn-success">Добавить ряд</button>
+            <button id="addColumn" class="btn btn-success">Добавить столбец</button>
+        </div>
+
+        
+        <table id="table" class="table table-bordered table-responsive"></table>
+    </div>
+    
+    <script>
+        const table = document.getElementById('table');
+        const sizeInput = document.getElementById('sizeInput');
+        const generateTableBtn = document.getElementById('generateTable');
+        const transposeTableBtn = document.getElementById('transposeTable');
+        const maxSelectionInput = document.getElementById('maxSelection');
+        const addRowBtn = document.getElementById('addRow');
+        const addColumnBtn = document.getElementById('addColumn');
+        let numRows = 0;
+        let numCols = 0;
+
+        generateTableBtn.addEventListener('click', generateTable);
+        transposeTableBtn.addEventListener('click', transposeTable);
+        addRowBtn.addEventListener('click', addRow);
+        addColumnBtn.addEventListener('click', addColumn);
+
+        function generateTable() {
+            const size = Number.parseInt(sizeInput.value, 10);
+            if (size > 0) {
+                numRows = size;
+                numCols = size;
+                let html = '';
+                for (let i = 0; i < numRows; i++) {
+                    html += '<tr>';
+                    for (let j = 0; j < numCols; j++) {
+                        const randomValue = Math.floor(Math.random() * 100) + 1;
+                        html += `<td data-row="${i}" data-col="${j}" data-value="${randomValue}">${randomValue}</td>`;
+                    }
+                    html += '</tr>';
+                }
+                table.innerHTML = html;
+
+                // Attach click event to cells
+                const cells = table.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.addEventListener('click', highlightCell);
+                });
+            }
+            else alert('Please enter valid size')
+        }
+
+        function transposeTable() {
+            const newTable = document.createElement('table');
+            for (let i = 0; i < numCols; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < numRows; j++) {
+                    const cell = table.querySelector(`[data-row="${j}"][data-col="${i}"]`).cloneNode(true);
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+
+                    row.appendChild(cell);
+                }
+                newTable.appendChild(row);
+            }
+            table.innerHTML = newTable.innerHTML;
+
+            // Attach click event to cells
+            const cells = table.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.addEventListener('click', highlightCell);
+            });
+
+            // Swap numRows and numCols
+            [numRows, numCols] = [numCols, numRows];
+        }
+
+        function addRow() {
+            const row = document.createElement('tr');
+            for (let j = 0; j < numCols; j++) {
+                const randomValue = Math.floor(Math.random() * 100) + 1;
+                row.innerHTML += `<td data-row="${numRows}" data-col="${j}" data-value="${randomValue}">${randomValue}</td>`;
+            }
+            table.appendChild(row);
+            numRows++;
+
+            // Attach click event to cells
+            const cells = table.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.addEventListener('click', highlightCell);
+            });
+        }
+
+        function addColumn() {
+            const rows = table.querySelectorAll('tr');
+            rows.forEach((row, index) => {
+                const randomValue = Math.floor(Math.random() * 10) + 1;
+                row.innerHTML += `<td data-row="${index}" data-col="${numCols}" data-value="${randomValue}">${randomValue}</td>`;
+            });
+            numCols++;
+
+            // Attach click event to cells
+            const cells = table.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.addEventListener('click', highlightCell);
+            });
+        }
+
+        function highlightCell() {
+            
+            const cell = this;
+            const selectedCells = table.querySelectorAll('.selected');
+            const maxSelection = Number.parseInt(maxSelectionInput.value, 10);
+
+            // Check if the cell has neighbors selected
+            const selectedInRow = Array.from(cell.parentElement.children).filter(c => c.classList.contains('selected'));
+            const selectedInCol = Array.from(table.querySelectorAll(`[data-col="${cell.dataset.col}"]`)).filter(c => c.classList.contains('selected'));
+            
+            // Check if the maximum number of selected cells in the row/col has been reached
+            if (selectedInRow.length >= maxSelection || selectedInCol.length >= maxSelection || checkNeighbours(cell)) {
+                return;
+            }
+            
+            cell.classList.add('selected');
+
+            // Toggle highlighting based on the cell's value
+            if (Number.parseInt(cell.dataset.value, 10) % 2 === 0) {
+                cell.classList.toggle('highlighted');
+            }
+        }
+
+        function checkNeighbours(cell) {
+            const col = Number.parseInt(cell.dataset.col, 10);
+            const row = Number.parseInt(cell.dataset.row, 10);
+            const leftNeighbor = table.querySelector(`[data-col="${col - 1}"][data-row="${row}"]`);
+            const rightNeighbor = table.querySelector(`[data-col="${col + 1}"][data-row="${row}"]`);
+    
+            return (leftNeighbor && leftNeighbor.classList.contains('selected')) || (rightNeighbor && rightNeighbor.classList.contains('selected'));
+        }
+    </script>
+</body>
+</html>

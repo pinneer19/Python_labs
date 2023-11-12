@@ -35,7 +35,14 @@
         <input type="hidden" name="service_id" value="{{ service.id }}">
     </div>
     {% endfor %}
-    <h3 class="text-2xl font-bold text-center mb-4">Итоговая стоимость: {{ cost }} BYN</h3>
+    <label for="coupon" class="font-bold mt-2">Введите купон:</label>
+    <input type="text" name="coupon" id="coupon" class="my-4 border w-1/8 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+    <button class="btn btn-primary" type="button" onclick="updatePrice()">Применить</button>
+
+    <h3 id="price" class="text-2xl font-bold text-center mb-4">Итоговая стоимость: {{ cost }} BYN</h3>
+
+    
+
     <div class="mt-6 flex items-center">
         <button type="submit" class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded">
             Заказать
@@ -44,6 +51,27 @@
     </div>
 </form>
 
+<script>
+    function updatePrice() {
+        let coupon = document.getElementById('coupon').value;
+        let price = "{{ cost }}";
+        
+        if (coupon === 'Coupon') {
+            
+            let discountedPrice = Number.parseInt(price, 10) - 15;
+            console.log(discountedPrice);
+            document.getElementById('price').innerText = "Итоговая стоимость(со скидкой): " + discountedPrice.toFixed(2) + ' BYN';
+        }
+        else if(coupon === '10') {
+            let discountedPrice = Number.parseInt(price, 10) * 0.9;
+            document.getElementById('price').innerText = "Итоговая стоимость(со скидкой): " + discountedPrice.toFixed(2) + ' BYN';
+        }
+         else {
+            alert("No such coupon!")
+        }
+        
+    }
+</script>
 
 {% else %}
 <div class="flex items-center justify-center">
